@@ -270,7 +270,4 @@ namespace SEScripting
             return temp;
         }
     }
-    /// <summary>
-    /// A Space Engineers Block that is required for your script to function.Provides book-keeping values and methods to Verify it exists and Get the block
-    /// </summary>
 }

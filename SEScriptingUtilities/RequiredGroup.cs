@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Sandbox.ModAPI.Ingame;
 
-namespace IngameScript
+namespace SEScripting
 {
     public class RequiredGroup : IEquatable<RequiredGroup>
     {
