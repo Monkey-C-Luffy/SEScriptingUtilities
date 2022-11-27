@@ -49,22 +49,22 @@ namespace SEScripting
         {
             get
             {
-                if(!_loadedRequiredBlocks)
-                {
-                    _loadedRequiredBlocks = LoadRequiredBlocks();
-                }
                 return _loadedRequiredBlocks;
+            }
+            private set
+            {
+                _loadedRequiredBlocks = value;
             }
         }
         public static bool LoadedRequiredGroups
         {
             get
             {
-                if(!_loadedRequiredGroups)
-                {
-                    _loadedRequiredGroups = LoadRequiredGroups();
-                }
                 return _loadedRequiredGroups;
+            }
+            private set
+            {
+                _loadedRequiredGroups = value;
             }
         }
         public static bool FoundRequiredBlocks
@@ -89,10 +89,9 @@ namespace SEScripting
                 return _foundRequiredGroups;
             }
         }
-        public static bool DebugEnable { get; set; }
 
-        public static Dictionary<string,RequiredBlock> requiredBlocksByTypeDict = new Dictionary<string,RequiredBlock>();
-        public static Dictionary<string,RequiredGroup> requiredGroupsByTypeDict = new Dictionary<string,RequiredGroup>();
+        public static Dictionary<string,RequiredBlock> requiredBlocksByIdentifierDict = new Dictionary<string,RequiredBlock>();
+        public static Dictionary<string,RequiredGroup> requiredGroupsByIdentifierDict = new Dictionary<string,RequiredGroup>();
 
         public static bool AddRequiredBlocks(bool load,params string[] requiredBlockIdentifiers)
         {
@@ -102,29 +101,29 @@ namespace SEScripting
                 try
                 {
                     RequiredBlock tempBlock = new RequiredBlock(requiredBlockIdentifiers[i]);
-                    if(load)
+                    if(requiredBlocksByIdentifierDict.ContainsKey(tempBlock.Identifier))
                     {
-                        tempBlock.LoadBlock();
-                    }
-                    if(requiredBlocksByTypeDict.ContainsKey(tempBlock.Identifier))
-                    {
-                        Utils.DebugLog($"Warning!Duplicate Block Identifier found:{tempBlock.Identifier}");
+                        Logging.DebugLog($"Warning!Duplicate Block Identifier found:{tempBlock.Identifier}");
                     }
                     else
                     {
-                        requiredBlocksByTypeDict.Add(tempBlock.Identifier,tempBlock);
+                        requiredBlocksByIdentifierDict.Add(tempBlock.Identifier,tempBlock);
                     }
                     _requiredBlockCount++;
                     localRequiredBlockCount++;
-                    Utils.DebugLog($"Succesfully added block {tempBlock.Name} to required blocks queue.",true);
+                    Logging.DebugLog($"Succesfully added block {tempBlock.Name} to required blocks queue.",true);
                 }
                 catch(Exception e)
                 {
-                    Utils.ShowException(e);
+                    Logging.ShowException(e);
                 }
                 IndexedRequiredBlocks = true;
             }
-            if(localRequiredBlockCount == requiredBlockIdentifiers.Length)
+            if(load)
+            {
+                LoadedRequiredBlocks =  LoadRequiredBlocks();
+            }
+            if(localRequiredBlockCount == requiredBlockIdentifiers.Length && FoundRequiredBlocks)
             {
                 return true;
             }
@@ -141,29 +140,29 @@ namespace SEScripting
                 try
                 {
                     RequiredGroup tempGroup = new RequiredGroup(requiredGroupIdentifiers[i]);
-                    if(load)
+                    if(requiredGroupsByIdentifierDict.ContainsKey(tempGroup.Identifier))
                     {
-                        tempGroup.LoadGroup();
-                    }
-                    if(requiredGroupsByTypeDict.ContainsKey(tempGroup.Identifier))
-                    {
-                        Utils.DebugLog($"Warning!Duplicate Group Identifier found:{tempGroup.Identifier}");
+                        Logging.DebugLog($"Warning!Duplicate Group Identifier found:{tempGroup.Identifier}");
                     }
                     else
                     {
-                        requiredGroupsByTypeDict.Add(tempGroup.Identifier,tempGroup);
+                        requiredGroupsByIdentifierDict.Add(tempGroup.Identifier,tempGroup);
                     }
                     _requiredBlockCount++;
                     localRequiredGroupCount++;
-                    Utils.DebugLog($"Succesfully added group {tempGroup.Identifier} to required blocks queue.",true);
+                    Logging.DebugLog($"Succesfully added group {tempGroup.Identifier} to required blocks queue.",true);
                 }
                 catch(Exception e)
                 {
-                    Utils.ShowException(e);
+                    Logging.ShowException(e);
                 }
                 IndexedRequiredGroups = true;
             }
-            if(localRequiredGroupCount == requiredGroupIdentifiers.Length)
+            if(load)
+            {
+                LoadRequiredGroups();
+            }
+            if(localRequiredGroupCount == requiredGroupIdentifiers.Length && FoundRequiredGroups)
             {
                 return true;
             }
@@ -175,7 +174,7 @@ namespace SEScripting
         public static bool LoadRequiredBlocks()
         {
             if(!FoundRequiredBlocks) return false;
-            foreach(RequiredBlock requiredBlock in requiredBlocksByTypeDict.Values)
+            foreach(RequiredBlock requiredBlock in requiredBlocksByIdentifierDict.Values)
             {
                 try
                 {
@@ -183,7 +182,7 @@ namespace SEScripting
                 }
                 catch(Exception e)
                 {
-                    Utils.ShowException(e,$"Failed to load required block:{requiredBlock.Identifier}!");
+                    Logging.ShowException(e,$"Failed to load required block:{requiredBlock.Identifier}!");
                     return false;
                 }
             }
@@ -193,10 +192,10 @@ namespace SEScripting
         {
             if(!IndexedRequiredBlocks)
             {
-                Utils.DebugLog($"Required Blocks haven't been added to dictionary!Cannot find them!",true);
+                Logging.DebugLog($"Required Blocks haven't been added to dictionary!Cannot find them!",true);
                 return false;
             }
-            foreach(RequiredBlock requiredBlock in requiredBlocksByTypeDict.Values)
+            foreach(RequiredBlock requiredBlock in requiredBlocksByIdentifierDict.Values)
             {
                 if(requiredBlock.Exists)
                 {
@@ -208,7 +207,7 @@ namespace SEScripting
         public static bool LoadRequiredGroups()
         {
             if(!FoundRequiredGroups) return false;
-            foreach(RequiredGroup requiredGroup in requiredGroupsByTypeDict.Values)
+            foreach(RequiredGroup requiredGroup in requiredGroupsByIdentifierDict.Values)
             {
                 try
                 {
@@ -216,7 +215,7 @@ namespace SEScripting
                 }
                 catch(Exception e)
                 {
-                    Utils.ShowException(e,$"Failed to load required group:{requiredGroup.Identifier}!");
+                    Logging.ShowException(e,$"Failed to load required group:{requiredGroup.Identifier}!");
                     return false;
                 }
             }
@@ -226,10 +225,10 @@ namespace SEScripting
         {
             if(!IndexedRequiredGroups)
             {
-                Utils.DebugLog($"Required Groups haven't been added to dictionary!Cannot find them!",true);
+                Logging.DebugLog($"Required Groups haven't been added to dictionary!Cannot find them!",true);
                 return false;
             }
-            foreach(RequiredGroup requiredGroup in requiredGroupsByTypeDict.Values)
+            foreach(RequiredGroup requiredGroup in requiredGroupsByIdentifierDict.Values)
             {
                 if(requiredGroup.Exists)
                 {
@@ -244,15 +243,11 @@ namespace SEScripting
         }
         public static RequiredBlock GetRequiredBlockByKey(string key)
         {
-            if(!LoadedRequiredBlocks)
-            {
-                Utils.DebugLog($"Cannot get required group with identifier:{key}, required groups weren't loaded!",true);
-                return null;
-            }
+            if(!requiredBlocksByIdentifierDict.ContainsKey(key)) AddRequiredBlocks(true,new string[]{key });
             RequiredBlock temp = null;
-            if(!requiredBlocksByTypeDict.TryGetValue(key,out temp))
+            if(!requiredBlocksByIdentifierDict.TryGetValue(key,out temp))
             {
-                Utils.DebugLog($"Couldn't get value from key:{key} in dictionary!",true);
+                Logging.DebugLog($"Couldn't get value from key:{key} in dictionary!",true);
             }
             return temp;
         }
@@ -262,15 +257,11 @@ namespace SEScripting
         }
         public static RequiredGroup GetRequiredGroupByKey(string key)
         {
-            if(!LoadedRequiredGroups)
-            {
-                Utils.DebugLog($"Cannot get required group with identifier:{key}, required groups weren't loaded!",true);
-                return null;
-            }
+            if(!requiredGroupsByIdentifierDict.ContainsKey(key)) AddRequiredBlocks(true,new string[] { key });
             RequiredGroup temp = null;
-            if(!requiredGroupsByTypeDict.TryGetValue(key,out temp))
+            if(!requiredGroupsByIdentifierDict.TryGetValue(key,out temp))
             {
-                Utils.DebugLog($"Couldn't get value from key:{key} in dictionary!",true);
+                Logging.DebugLog($"Couldn't get value from key:{key} in dictionary!",true);
             }
             return temp;
         }

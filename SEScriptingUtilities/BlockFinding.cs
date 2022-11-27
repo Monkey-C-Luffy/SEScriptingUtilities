@@ -9,13 +9,10 @@ using Sandbox.ModAPI.Ingame;
 
 namespace SEScripting
 {
-    public static class Utils
+    public static class BlockFinding
+
     {
         public static MyGridProgram gridProgram;
-        static List<string> debugStringsList = new List<string>();
-
-        #region BlockFinding
-
         public static bool FindRequiredBlocksByName(params string[] blockNames)
         {
             return FindRequiredBlocksByKey(blockNames); 
@@ -52,14 +49,14 @@ namespace SEScripting
             }
             catch(Exception e)
             {
-                DebugLog($"An error has occured finding the required blocks\nError:{e.Message}");
+                Logging.DebugLog($"An error has occured finding the required blocks\nError:{e.Message}");
             }
             int cnt = 0;
             foreach(var item in blocksFound)
             {
                 if(!item.Value)
                 {
-                    DebugLog($"Block with key '{item.Key},was not found!");
+                    Logging.DebugLog($"Block with key '{item.Key},was not found!");
                 }
                 cnt++;
             }
@@ -93,14 +90,14 @@ namespace SEScripting
             }
             catch(Exception e)
             {
-                DebugLog($"An error has occured finding the required blocks\nError:{e.Message}");
+                Logging.DebugLog($"An error has occured finding the required blocks\nError:{e.Message}");
             }
             int cnt = 0;
             foreach(var item in groupsFound)
             {
                 if(!item.Value)
                 {
-                    DebugLog($"Block with key '{item.Key},was not found!");
+                    Logging.DebugLog($"Block with key '{item.Key},was not found!");
                 }
                 cnt++;
             }
@@ -136,15 +133,15 @@ namespace SEScripting
                 {
                     if(block.DisplayNameText.Contains(key))
                     {
-                        DebugLog($"Acquired block '{(block as IMyTerminalBlock).DisplayNameText}'");
+                        Logging.DebugLog($"Acquired block '{(block as IMyTerminalBlock).DisplayNameText}'");
                         return (T)block;
                     }
                 }
             }
             catch(Exception e)
             {
-                ShowDebug();
-                ShowException(e);
+                Logging.ShowDebug();
+                Logging.ShowException(e);
             }
             return default(T);
         }
@@ -158,15 +155,15 @@ namespace SEScripting
                 {
                     if(block.DisplayNameText.Contains(key))
                     {
-                        DebugLog($"Acquired block '{(block as IMyTerminalBlock).DisplayNameText}'");
+                        Logging.DebugLog($"Acquired block '{(block as IMyTerminalBlock).DisplayNameText}'");
                         return block;
                     }
                 }
             }
             catch(Exception e)
             {
-                ShowDebug();
-                ShowException(e);
+                Logging.ShowDebug();
+                Logging.ShowException(e);
             }
             return null;
         }
@@ -180,19 +177,19 @@ namespace SEScripting
                 {
                     if(group.Name.Contains(key))
                     {
-                        DebugLog($"Acquired block group '{group.Name}'");
+                        Logging.DebugLog($"Acquired block group '{group.Name}'");
                         group.GetBlocksOfType(container);
                         if(container == null)
                         {
-                            ShowException(new Exception($"Null!Container of blocks for {group.Name} is NULL!"));
+                            Logging.ShowException(new Exception($"Null!Container of blocks for {group.Name} is NULL!"));
                         }
                         if(container.Count > 0)
                         {
-                            DebugLog($"Acquired block group '{group.Name}'");
+                            Logging.DebugLog($"Acquired block group '{group.Name}'");
                         }
                         else
                         {
-                            ShowException(new Exception($"Error!Container of blocks for {group.Name} is Empty!"));
+                            Logging.ShowException(new Exception($"Error!Container of blocks for {group.Name} is Empty!"));
                         }
                     }
                 }
@@ -200,8 +197,8 @@ namespace SEScripting
             }
             catch(Exception e)
             {
-                ShowDebug();
-                ShowException(e);
+                Logging.ShowDebug();
+                Logging.ShowException(e);
             }
         }
         public static void GetRequiredGroupByKey(string key,List<IMyTerminalBlock> container)
@@ -214,19 +211,19 @@ namespace SEScripting
                 {
                     if(group.Name.Contains(key))
                     {
-                        DebugLog($"Acquired block group '{group.Name}'");
+                        Logging.DebugLog($"Acquired block group '{group.Name}'");
                         group.GetBlocksOfType(container);
                         if(container == null)
                         {
-                            ShowException(new Exception($"Null!Container of blocks for {group.Name} is NULL!"));
+                            Logging.ShowException(new Exception($"Null!Container of blocks for {group.Name} is NULL!"));
                         }
                         if(container.Count > 0)
                         {
-                            DebugLog($"Acquired block group '{group.Name}'");
+                            Logging.DebugLog($"Acquired block group '{group.Name}'");
                         }
                         else
                         {
-                            ShowException(new Exception($"Error!Container of blocks for {group.Name} is Empty!"));
+                            Logging.ShowException(new Exception($"Error!Container of blocks for {group.Name} is Empty!"));
                         }
                     }
                 }
@@ -234,8 +231,8 @@ namespace SEScripting
             }
             catch(Exception e)
             {
-                ShowDebug();
-                ShowException(e);
+                Logging.ShowDebug();
+                Logging.ShowException(e);
             }
         }
         public static IMyBlockGroup GetRequiredGroupByKey(string key)
@@ -248,15 +245,15 @@ namespace SEScripting
                 {
                     if(blockGroups[i].Name.Contains(key))
                     {
-                        DebugLog($"Acquired block group '{blockGroups[i].Name}'");
+                        Logging.DebugLog($"Acquired block group '{blockGroups[i].Name}'");
                         return blockGroups[i];
                     }
                 }
             }
             catch(Exception e)
             {
-                ShowDebug();
-                ShowException(e);
+                Logging.ShowDebug();
+                Logging.ShowException(e);
             }
             return null;
         }
@@ -264,71 +261,45 @@ namespace SEScripting
         {
             if(!found)
             {
-                DebugLog($"Block with identifier:'{blockIdentifier}' was not found");
+                Logging.DebugLog($"Block with identifier:'{blockIdentifier}' was not found");
             }
             else
             {
-                DebugLog($"Block '{(block == null?blockIdentifier:block.DisplayNameText)}' was found");
+                Logging.DebugLog($"Block '{(block == null?blockIdentifier:block.DisplayNameText)}' was found");
             }
         }
         public static void FoundGroup(bool found,string groupIdentifier,List<IMyTerminalBlock> group)
         { 
             if(!found)
             {
-                DebugLog($"Block with identifier:'{groupIdentifier}' was not found");
+                Logging.DebugLog($"Block with identifier:'{groupIdentifier}' was not found");
             }
             else
             {
-                DebugLog($"Block '{ groupIdentifier}' was found");
+                Logging.DebugLog($"Block '{ groupIdentifier}' was found");
             }
         }
         public static void FoundGroup(bool found,string groupIdentifier,IMyBlockGroup group)
         {
             if(!found)
             {
-                DebugLog($"Block with identifier:'{groupIdentifier}' was not found");
+                Logging.DebugLog($"Block with identifier:'{groupIdentifier}' was not found");
             }
             else
             {
-                DebugLog($"Block '{( group!=null?group.Name:groupIdentifier)}' was found");
+                Logging.DebugLog($"Block '{( group!=null?group.Name:groupIdentifier)}' was found");
             }
         }
         public static void FoundGroup(bool found,string groupIdentifier)
         {
             if(!found)
             {
-                DebugLog($"Block with identifier:'{groupIdentifier}' was not found");
+                Logging.DebugLog($"Block with identifier:'{groupIdentifier}' was not found");
             }
             else
             {
-                DebugLog($"Block '{ groupIdentifier}' was found");
+                Logging.DebugLog($"Block '{ groupIdentifier}' was found");
             }
         }
-            #endregion
-
-            #region DebugStuff
-
-            public static void ShowDebug()
-        {
-            for(int i = 0;i < debugStringsList.Count;i++)
-            {
-                gridProgram.Echo(debugStringsList[i]);
-            }
-        }
-
-        public static void DebugLog(string debugString,bool showDebug = false)
-        {
-            if(debugStringsList.Count > 20)
-            {
-                debugStringsList.RemoveAt(0);
-            }
-            debugStringsList.Add(debugString);
-            if(showDebug) ShowDebug();
-        }
-        public static void ShowException(Exception e,string extraMessage = "")
-        {
-            gridProgram.Echo($"An error happened: {extraMessage}:\n{e.Message}{e.StackTrace}");
-        }
-        #endregion
     }
 }

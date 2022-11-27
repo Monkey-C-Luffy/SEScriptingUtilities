@@ -44,7 +44,7 @@ namespace SEScripting
         {
             if(CheckBlockExists())
             {
-                Block = Utils.GetRequiredBlockByKey(Identifier);
+                Block = BlockFinding.GetRequiredBlockByKey(Identifier);
                 if(Block != null)
                 {
                     Name = Block.DisplayNameText;
@@ -59,7 +59,7 @@ namespace SEScripting
 
         public bool CheckBlockExists()
         {
-            Exists = Utils.FindRequiredBlocksByKey(Identifier);
+            Exists = BlockFinding.FindRequiredBlocksByKey(Identifier);
             DebugBlockFound();
             return Exists;
         }
@@ -70,8 +70,7 @@ namespace SEScripting
 
         private void DebugBlockFound()
         {
-            if(!BlocksManager.DebugEnable) return;
-            Utils.FoundBlock(Exists,Identifier,Block);
+            BlockFinding.FoundBlock(Exists,Identifier,Block);
         }
 
         public override int GetHashCode()

@@ -45,7 +45,7 @@ namespace SEScripting
         {
             if(CheckGroupExists())
             {
-                GroupBlocks = Utils.GetRequiredGroupByKey(Identifier);
+                GroupBlocks = BlockFinding.GetRequiredGroupByKey(Identifier);
                 if(GroupBlocks != null)
                 {
                     Name = GroupBlocks.Name;
@@ -60,7 +60,7 @@ namespace SEScripting
 
         public bool CheckGroupExists()
         {
-            Exists = Utils.FindRequiredGroupsByKey(Identifier);
+            Exists = BlockFinding.FindRequiredGroupsByKey(Identifier);
             DebugGroupFound();
             return Exists;
         }
@@ -71,7 +71,7 @@ namespace SEScripting
             GroupBlocks.GetBlocksOfType(temp);
             if(temp == null)
             {
-                Utils.DebugLog($"Couldn't get group blocks from RequiredGroup:{Identifier}!");
+                Logging.DebugLog($"Couldn't get group blocks from RequiredGroup:{Identifier}!");
             }
             return temp;
         }
@@ -81,14 +81,19 @@ namespace SEScripting
             GroupBlocks.GetBlocksOfType(blocks);
             if(blocks == null)
             {
-                Utils.DebugLog($"Couldn't get group blocks from RequiredGroup:{Identifier}!");
+                Logging.DebugLog($"Couldn't get group blocks from RequiredGroup:{Identifier}!");
             }
             blocksContainer = blocks;
         }
+        public List<T> ConvertToList<T>() where T:class
+        {
+            List<T> blocks = new List<T>();
+            GroupBlocks.GetBlocksOfType(blocks);
+            return blocks;
+        }
         private void DebugGroupFound()
         {
-            if(!BlocksManager.DebugEnable) return;
-            Utils.FoundGroup(Exists,Identifier,GroupBlocks);
+            BlockFinding.FoundGroup(Exists,Identifier,GroupBlocks);
         }
 
         public override int GetHashCode()
@@ -101,7 +106,7 @@ namespace SEScripting
             return GroupBlocks == other.GroupBlocks && Identifier == other.Identifier && GroupType == other.GroupType;
         }
 
-        public static implicit operator List<IMyTerminalBlock>(RequiredGroup requiredGroup)
+        public static explicit operator List<IMyTerminalBlock>(RequiredGroup requiredGroup)
         {
             return requiredGroup.GetBlocks<IMyTerminalBlock>();
         }
