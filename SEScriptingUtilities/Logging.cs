@@ -15,7 +15,7 @@ namespace SEScripting
         public static bool DebugEnable { get; set; }
         static List<string> debugStringsList = new List<string>();
 
-        static MyGridProgram gridProgram = Utils.gridProgram;
+        public static MyGridProgram gridProgram;
 
         public static void ShowDebug()
         {

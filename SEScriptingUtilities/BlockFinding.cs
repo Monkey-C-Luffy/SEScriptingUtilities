@@ -10,9 +10,8 @@ using Sandbox.ModAPI.Ingame;
 namespace SEScripting
 {
     public static class BlockFinding
-
     {
-        public static MyGridProgram gridProgram;
+        public static MyGridProgram gridProgram = Logging.gridProgram;
         public static bool FindRequiredBlocksByName(params string[] blockNames)
         {
             return FindRequiredBlocksByKey(blockNames); 
