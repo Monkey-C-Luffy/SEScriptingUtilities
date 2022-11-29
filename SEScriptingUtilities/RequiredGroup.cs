@@ -68,7 +68,7 @@ namespace SEScripting
         }
         private void DebugGroupFound()
         {
-            BlockFinding.FoundGroup(Exists,Identifier,BlocksManager.ConvertToTerminalList(GroupBlocks));
+            BlockFinding.FoundGroup(Exists,Identifier,BlockUtilities.ConvertToTerminalBlockList(GroupBlocks));
         }
 
         public override int GetHashCode()
