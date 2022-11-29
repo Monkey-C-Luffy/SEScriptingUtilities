@@ -34,13 +34,14 @@ namespace SEScripting
 
         public bool Loaded { get; private set;}
 
-        public RequiredBlock(string blockIdentifier)
+        public RequiredBlock(string blockIdentifier,bool load=true)
         {
             Identifier = blockIdentifier;
             BlockType = null;
             Name = "";
             Exists = false;
             Loaded = false;
+            if(load) LoadBlock();
         }
 
         public bool LoadBlock()
@@ -84,6 +85,11 @@ namespace SEScripting
         public bool Equals(RequiredBlock<T> other)
         {
             return Block as IMyTerminalBlock == ( other.Block as IMyTerminalBlock) && Identifier == other.Identifier && BlockType == other.BlockType;
+        }
+
+        public static explicit operator T(RequiredBlock<T> block)
+        {
+            return block.GetBlock<T>();
         }
     }
 }

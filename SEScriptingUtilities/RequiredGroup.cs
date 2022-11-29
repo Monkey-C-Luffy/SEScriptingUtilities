@@ -35,19 +35,20 @@ namespace SEScripting
 
         public bool Loaded { get; private set;}
 
-        public RequiredGroup(string _groupIdentifier)
+        public RequiredGroup(string _groupIdentifier,bool load=true)
         {
             Identifier = _groupIdentifier;
             GroupType = null;
-            Name = "";
+            Name = Identifier;
             Exists = false;
+            if(load) LoadGroup();
         }
 
         public bool LoadGroup()
         {
             if(CheckGroupExists())
             {
-               GroupBlocks = BlockFinding.GetRequiredGroupByKey<T>(Identifier);
+                GroupBlocks = BlockFinding.GetRequiredGroupByKey<T>(Identifier);
                 if(GroupBlocks != null)
                 {
                     Name = Identifier;
@@ -81,7 +82,7 @@ namespace SEScripting
             return GroupBlocks == other.GroupBlocks && Identifier == other.Identifier && GroupType == other.GroupType;
         }
 
-        public static explicit operator List<T>(RequiredGroup<T> requiredGroup)
+        public static implicit operator List<T>(RequiredGroup<T> requiredGroup)
         {
             return requiredGroup.GroupBlocks;
         }
