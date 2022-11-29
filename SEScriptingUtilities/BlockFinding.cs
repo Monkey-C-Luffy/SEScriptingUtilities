@@ -122,6 +122,10 @@ namespace SEScripting
         {
             return GetRequiredGroupByKey(name);       
         }
+        public static List<T> GetRequiredGroupByName<T>(string name) where T:class
+        {
+            return GetRequiredGroupByKey<T>(name);
+        }
         public static T GetRequiredBlockByKey<T>(string key)
         {
             try
@@ -246,6 +250,30 @@ namespace SEScripting
                     {
                         Logging.DebugLog($"Acquired block group '{blockGroups[i].Name}'");
                         return blockGroups[i];
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                Logging.ShowDebug();
+                Logging.ShowException(e);
+            }
+            return null;
+        }
+        public static List<T> GetRequiredGroupByKey<T>(string key) where T:class
+        {
+            try
+            {
+                List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
+                gridProgram.GridTerminalSystem.GetBlockGroups(blockGroups);
+                for(int i = 0;i < blockGroups.Count;i++)
+                {
+                    if(blockGroups[i].Name.Contains(key))
+                    {
+                        Logging.DebugLog($"Acquired block group '{blockGroups[i].Name}'");
+                        List<T> retList = new List<T>();
+                        blockGroups[i].GetBlocksOfType(retList);
+                        return retList;
                     }
                 }
             }

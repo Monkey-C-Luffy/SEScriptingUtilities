@@ -17,6 +17,17 @@ namespace SEScripting
 
         public static MyGridProgram gridProgram;
 
+        public static int InstructionsCount
+        {
+            get
+            {
+                return gridProgram.Runtime.CurrentInstructionCount;
+            }
+        }
+        public static void ShowInstructionCount()
+        {
+            DebugLog($"Instructions count:{InstructionsCount}",true);
+        }
         public static void ShowDebug()
         {
             for(int i = 0;i < debugStringsList.Count;i++)

@@ -9,10 +9,10 @@ using Sandbox.ModAPI.Ingame;
 
 namespace SEScripting
 {
-    public class RequiredGroup : IEquatable<RequiredGroup>
+    public class RequiredGroup<T> : IEquatable<RequiredGroup<T>> where T:class
     {
-        private IMyBlockGroup _groupBlocks = null;
-        public IMyBlockGroup GroupBlocks
+        private List<T> _groupBlocks = null;
+        public List<T> GroupBlocks
         {
             get
             {
@@ -33,6 +33,8 @@ namespace SEScripting
 
         public bool Exists { get; private set; }
 
+        public bool Loaded { get; private set;}
+
         public RequiredGroup(string _groupIdentifier)
         {
             Identifier = _groupIdentifier;
@@ -41,21 +43,21 @@ namespace SEScripting
             Exists = false;
         }
 
-        public IMyBlockGroup LoadGroup()
+        public bool LoadGroup()
         {
             if(CheckGroupExists())
             {
-                GroupBlocks = BlockFinding.GetRequiredGroupByKey(Identifier);
+               GroupBlocks = BlockFinding.GetRequiredGroupByKey<T>(Identifier);
                 if(GroupBlocks != null)
                 {
-                    Name = GroupBlocks.Name;
+                    Name = Identifier;
                     GroupType = GroupBlocks.GetType();
                     Exists = true;
-                    return GroupBlocks;
+                    Loaded = true;
                 }
             }
             DebugGroupFound();
-            return null;
+            return Loaded;
         }
 
         public bool CheckGroupExists()
@@ -64,36 +66,9 @@ namespace SEScripting
             DebugGroupFound();
             return Exists;
         }
-
-        public List<T> GetBlocks<T>() where T : class
-        {
-            List<T> temp = null;
-            GroupBlocks.GetBlocksOfType(temp);
-            if(temp == null)
-            {
-                Logging.DebugLog($"Couldn't get group blocks from RequiredGroup:{Identifier}!");
-            }
-            return temp;
-        }
-        public void GetBlocks<T>(List<T> blocksContainer) where T : class
-        {
-            List<T> blocks = null;
-            GroupBlocks.GetBlocksOfType(blocks);
-            if(blocks == null)
-            {
-                Logging.DebugLog($"Couldn't get group blocks from RequiredGroup:{Identifier}!");
-            }
-            blocksContainer = blocks;
-        }
-        public List<T> ConvertToList<T>() where T:class
-        {
-            List<T> blocks = new List<T>();
-            GroupBlocks.GetBlocksOfType(blocks);
-            return blocks;
-        }
         private void DebugGroupFound()
         {
-            BlockFinding.FoundGroup(Exists,Identifier,GroupBlocks);
+            BlockFinding.FoundGroup(Exists,Identifier,BlocksManager.ConvertToTerminalList(GroupBlocks));
         }
 
         public override int GetHashCode()
@@ -101,14 +76,14 @@ namespace SEScripting
             return Name.GetHashCode() + Identifier.GetHashCode() + GroupBlocks.GetHashCode() + GroupType.GetHashCode();
         }
 
-        public bool Equals(RequiredGroup other)
+        public bool Equals(RequiredGroup<T> other)
         {
             return GroupBlocks == other.GroupBlocks && Identifier == other.Identifier && GroupType == other.GroupType;
         }
 
-        public static explicit operator List<IMyTerminalBlock>(RequiredGroup requiredGroup)
+        public static explicit operator List<T>(RequiredGroup<T> requiredGroup)
         {
-            return requiredGroup.GetBlocks<IMyTerminalBlock>();
+            return requiredGroup.GroupBlocks;
         }
     }
 }

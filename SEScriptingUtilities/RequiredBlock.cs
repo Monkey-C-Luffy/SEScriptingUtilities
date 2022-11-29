@@ -8,10 +8,10 @@ using Sandbox.ModAPI.Ingame;
 
 namespace SEScripting
 {
-    public class RequiredBlock : IEquatable<RequiredBlock>
+    public class RequiredBlock<T> : IEquatable<RequiredBlock<T>> where T:class
     {
-        private IMyTerminalBlock _block = null;
-        public IMyTerminalBlock Block
+        private T _block = default(T);
+        public T Block
         {
             get
             {
@@ -32,29 +32,32 @@ namespace SEScripting
 
         public bool Exists { get; private set; }
 
+        public bool Loaded { get; private set;}
+
         public RequiredBlock(string blockIdentifier)
         {
             Identifier = blockIdentifier;
             BlockType = null;
             Name = "";
             Exists = false;
+            Loaded = false;
         }
 
-        public IMyTerminalBlock LoadBlock()
+        public bool LoadBlock()
         {
             if(CheckBlockExists())
             {
-                Block = BlockFinding.GetRequiredBlockByKey(Identifier);
+                Block = BlockFinding.GetRequiredBlockByKey<T>(Identifier);
                 if(Block != null)
                 {
-                    Name = Block.DisplayNameText;
+                    Name = (Block as IMyTerminalBlock).DisplayNameText;
                     BlockType = Block.GetType();
                     Exists = true;
-                    return Block;
+                    Loaded = true;
                 }
             }
             DebugBlockFound();
-            return null;
+            return Loaded;
         }
 
         public bool CheckBlockExists()
@@ -70,7 +73,7 @@ namespace SEScripting
 
         private void DebugBlockFound()
         {
-            BlockFinding.FoundBlock(Exists,Identifier,Block);
+            BlockFinding.FoundBlock(Exists,Identifier,Block as IMyTerminalBlock);
         }
 
         public override int GetHashCode()
@@ -78,9 +81,9 @@ namespace SEScripting
             return Name.GetHashCode() + Identifier.GetHashCode() + Block.GetHashCode() + BlockType.GetHashCode();
         }
 
-        public bool Equals(RequiredBlock other)
+        public bool Equals(RequiredBlock<T> other)
         {
-            return Block == other.Block && Identifier == other.Identifier && BlockType == other.BlockType;
+            return Block as IMyTerminalBlock == ( other.Block as IMyTerminalBlock) && Identifier == other.Identifier && BlockType == other.BlockType;
         }
     }
 }
