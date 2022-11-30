@@ -91,21 +91,20 @@ namespace IngameScript
             {
                 if(CheckBlockExists())
                 {
-                    Block = BlockFinding.GetRequiredBlockByKey<T>(Identifier);
-                    Logging.ShowDebug();
+                    Block = BlockFinding.GetBlockByName<T>(Identifier);                   
                     if(Block != default(T))
                     {
                         Name = (Block as IMyTerminalBlock).DisplayNameText;
                         Loaded = true;
                     }
                 }
+                Logging.ShowDebug();
                 return Loaded;
             }
 
             public bool CheckBlockExists()
             {
-                Exists = BlockFinding.FindRequiredBlocksByName(Identifier);
-                Logging.ShowDebug();
+                Exists = BlockFinding.FindBlocksByName(Identifier);
                 return Exists;
             }
             public T GetBlock<T>() where T : class
@@ -123,6 +122,7 @@ namespace IngameScript
                 return Block as IMyTerminalBlock == (other.Block as IMyTerminalBlock) && Identifier == other.Identifier;
             }
 
+            //TODO:Check if Conversions cause SE problems
             public static explicit operator T(RequiredBlock<T> block)
             {
                 return block.GetBlock<T>();

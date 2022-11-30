@@ -92,21 +92,20 @@ namespace IngameScript
             {
                 if(CheckGroupExists())
                 {
-                    GroupBlocks = BlockFinding.GetRequiredGroupByKey<T>(Identifier);
-                    Logging.ShowDebug();
+                    GroupBlocks = BlockFinding.GetGroupByName<T>(Identifier);
                     if(GroupBlocks != null)
                     {
                         Name = Identifier;
                         Loaded = true;
                     }
                 }
+                Logging.ShowDebug();
                 return Loaded;
             }
 
             public bool CheckGroupExists()
             {
-                Exists = BlockFinding.FindRequiredBlocksByName(Identifier);
-                Logging.ShowDebug();
+                Exists = BlockFinding.FindBlocksByName(Identifier);
                 return Exists;
             }
 
