@@ -401,3 +401,4 @@ FodyWeavers.xsd
 *.dt
 *.Dump
 SEScriptingUtilities/SEScriptingUtilities.projitems
+SEScriptingTesting/
