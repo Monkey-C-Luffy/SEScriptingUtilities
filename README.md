@@ -11,3 +11,6 @@ The folder should contain a shared project file(.shproj) and the source code.<br
 All you then have to do is,right click on your visual studio solution in your Solution Explorer and add <b>existing</b> project,find the shared project and add it.<br/>
 This should be it!All done!
 </p>
+
+# Using With Malware Dev's Extension
+It is highly advised,to reduce the final lines of your script,to enable the MDK option <b>Remove Unused Types<b/>
