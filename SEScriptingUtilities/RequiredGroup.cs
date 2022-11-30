@@ -7,84 +7,123 @@ using System;
 using System.Collections.Generic;
 using Sandbox.ModAPI.Ingame;
 
-namespace SEScripting
+namespace IngameScript
 {
-    public class RequiredGroup<T> : IEquatable<RequiredGroup<T>> where T:class
+    partial class Program
     {
-        private List<T> _groupBlocks = null;
-        public List<T> GroupBlocks
+        public class RequiredGroup<T> : IEquatable<RequiredGroup<T>> where T : class
         {
-            get
+            private List<T> _groupBlocks = null;
+            public List<T> GroupBlocks
             {
-                if(_groupBlocks == null)
+                get
                 {
-                    LoadGroup();
+                    if(_groupBlocks == null)
+                    {
+                        LoadGroup();
+                    }
+                    return _groupBlocks;
                 }
-                return _groupBlocks;
-            }
-            private set
-            {
-                _groupBlocks = value;
-            }
-        }
-        public Type GroupType { get; private set; }
-        public string Name { get; private set; }
-        public string Identifier { get; private set; }
-
-        public bool Exists { get; private set; }
-
-        public bool Loaded { get; private set;}
-
-        public RequiredGroup(string _groupIdentifier,bool load=true)
-        {
-            Identifier = _groupIdentifier;
-            GroupType = null;
-            Name = Identifier;
-            Exists = false;
-            if(load) LoadGroup();
-        }
-
-        public bool LoadGroup()
-        {
-            if(CheckGroupExists())
-            {
-                GroupBlocks = BlockFinding.GetRequiredGroupByKey<T>(Identifier);
-                if(GroupBlocks != null)
+                private set
                 {
-                    Name = Identifier;
-                    GroupType = GroupBlocks.GetType();
-                    Exists = true;
-                    Loaded = true;
+                    _groupBlocks = value;
                 }
             }
-            DebugGroupFound();
-            return Loaded;
-        }
+            private string _name;
+            private string _identifier;
+            private bool _exists;
+            private bool _loaded;
+            public string Name
+            {
+                get
+                {
+                    return _name;
+                }
+                private set
+                {
+                    _name = value;
+                }
+            }
+            public string Identifier
+            {
+                get
+                {
+                    return _identifier;
+                }
+                private set
+                {
+                    _identifier = value;
+                }
+            }
 
-        public bool CheckGroupExists()
-        {
-            Exists = BlockFinding.FindRequiredGroupsByKey(Identifier);
-            DebugGroupFound();
-            return Exists;
-        }
-        private void DebugGroupFound()
-        {
-            BlockFinding.FoundGroup(Exists,Identifier,BlockUtilities.ConvertToTerminalBlockList(GroupBlocks));
-        }
+            public bool Exists
+            {
+                get
+                {
+                    return _exists;
+                }
+                private set
+                {
+                    _exists = value;
+                }
+            }
+            public bool Loaded
+            {
+                get
+                {
+                    return _loaded;
+                }
+                private set
+                {
+                    _loaded = value;
+                }
+            }
 
-        public override int GetHashCode()
-        {
-            return Name.GetHashCode() + Identifier.GetHashCode() + GroupBlocks.GetHashCode() + GroupType.GetHashCode();
-        }
+            public RequiredGroup(string _groupIdentifier,bool load = true)
+            {
+                Identifier = _groupIdentifier;
+                Name = Identifier;
+                Exists = false;
+                Loaded = false;
+                if(load) LoadGroup();
+            }
 
-        public bool Equals(RequiredGroup<T> other)
-        {
-            return GroupBlocks == other.GroupBlocks && Identifier == other.Identifier && GroupType == other.GroupType;
-        }
+            public bool LoadGroup()
+            {
+                if(CheckGroupExists())
+                {
+                    GroupBlocks = BlockFinding.GetRequiredGroupByKey<T>(Identifier);
+                    Logging.ShowDebug();
+                    if(GroupBlocks != null)
+                    {
+                        Name = Identifier;
+                        Loaded = true;
+                    }
+                }
+                return Loaded;
+            }
 
-        public static implicit operator List<T>(RequiredGroup<T> requiredGroup)
-        {
-            return requiredGroup.GroupBlocks;
+            public bool CheckGroupExists()
+            {
+                Exists = BlockFinding.FindRequiredBlocksByName(Identifier);
+                Logging.ShowDebug();
+                return Exists;
+            }
+
+            public override int GetHashCode()
+            {
+                return Name.GetHashCode() + Identifier.GetHashCode() + GroupBlocks.GetHashCode();
+            }
+
+            public bool Equals(RequiredGroup<T> other)
+            {
+                return GroupBlocks == other.GroupBlocks && Identifier == other.Identifier;
+            }
+
+            public static implicit operator List<T>(RequiredGroup<T> requiredGroup)
+            {
+                return requiredGroup.GroupBlocks;
+            }
         }
     }
 }

@@ -7,30 +7,32 @@ using System;
 using System.Collections.Generic;
 using Sandbox.ModAPI.Ingame;
 
-namespace SEScripting
+namespace IngameScript
 {
-    public static class BlockUtilities
+    partial class Program
     {
- 
-        public static List<IMyTerminalBlock> ConvertToTerminalBlockList<T>(RequiredGroup<T> requiredGroup) where T : class
+        public static class BlockUtilities
         {
-            return ConvertToTerminalBlockList(requiredGroup.GroupBlocks);
-        }
-        public static List<IMyTerminalBlock> ConvertToTerminalBlockList<T>(List<T> groupBlocks) where T : class
-        {
-            List<IMyTerminalBlock> terminalBlocksList = new List<IMyTerminalBlock>();
-            try
+            public static List<IMyTerminalBlock> ConvertToTerminalBlockList<T>(RequiredGroup<T> requiredGroup) where T : class
             {
-                for(int i = 0;i < groupBlocks.Count;i++)
+                return ConvertToTerminalBlockList(requiredGroup.GroupBlocks);
+            }
+            public static List<IMyTerminalBlock> ConvertToTerminalBlockList<T>(List<T> groupBlocks) where T : class
+            {
+                List<IMyTerminalBlock> terminalBlocksList = new List<IMyTerminalBlock>();
+                try
                 {
-                    terminalBlocksList.Add(groupBlocks[i] as IMyTerminalBlock);
+                    for(int i = 0;i < groupBlocks.Count;i++)
+                    {
+                        terminalBlocksList.Add(groupBlocks[i] as IMyTerminalBlock);
+                    }
                 }
+                catch(Exception e)
+                {
+                    Logging.ShowException(e,$"Something went wrong trying to convert to {typeof(T)}!");
+                }
+                return terminalBlocksList;
             }
-            catch(Exception e)
-            {
-                Logging.ShowException(e,$"Something went wrong trying to convert to {typeof(T)}!");
-            }
-            return terminalBlocksList;
         }
     }
 }

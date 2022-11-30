@@ -8,46 +8,54 @@ using System.Collections.Generic;
 using Sandbox.ModAPI.Ingame;
 
 
-namespace SEScripting
+namespace IngameScript
 {
-    public static class Logging
+    partial class Program
     {
-        public static bool DebugEnable { get; set; }
-        static List<string> debugStringsList = new List<string>();
+        public static class Logging
+        {
+            public static bool DebugEnable { get; set; }
 
-        public static MyGridProgram gridProgram;
+            public static int MaxDebugLines { get;} = 20;
 
-        public static int InstructionsCount
-        {
-            get
-            {
-                return gridProgram.Runtime.CurrentInstructionCount;
-            }
-        }
-        public static void ShowInstructionCount()
-        {
-            DebugLog($"Instructions count:{InstructionsCount}",true);
-        }
-        public static void ShowDebug()
-        {
-            for(int i = 0;i < debugStringsList.Count;i++)
-            {
-                gridProgram.Echo(debugStringsList[i]);
-            }
-        }
+            static List<string> debugStringsList = new List<string>();
 
-        public static void DebugLog(string debugString,bool showDebug = false)
-        {
-            if(debugStringsList.Count > 20)
+            public static MyGridProgram gridProgram;
+
+            public static int InstructionsCount
             {
-                debugStringsList.RemoveAt(0);
+                get
+                {
+                    return gridProgram.Runtime.CurrentInstructionCount;
+                }
             }
-            debugStringsList.Add(debugString);
-            if(showDebug) ShowDebug();
-        }
-        public static void ShowException(Exception e,string extraMessage = "")
-        {
-            gridProgram.Echo($"An error happened: {extraMessage}:\n{e.Message}{e.StackTrace}");
+            public static void ShowInstructionCount(string message="")
+            {
+                DebugLog($"Instructions count:{InstructionsCount},at {message}",true);
+            }
+            public static void ShowDebug()
+            {
+                if(!DebugEnable) return;
+                for(int i = 0;i < debugStringsList.Count;i++)
+                {
+                    gridProgram.Echo(debugStringsList[i]);
+                }
+            }
+
+            public static void DebugLog(string debugString,bool showDebug = false)
+            {
+                if(!DebugEnable) return;
+                if(debugStringsList.Count > MaxDebugLines)
+                {
+                    debugStringsList.RemoveAt(0);
+                }
+                debugStringsList.Add(debugString);
+                if(showDebug) ShowDebug();
+            }
+            public static void ShowException(Exception e,string extraMessage = "")
+            {
+                gridProgram.Echo($"An error happened: {extraMessage}:\n{e.Message}{e.StackTrace}");
+            }
         }
     }
 }
