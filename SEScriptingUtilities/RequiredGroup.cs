@@ -18,10 +18,6 @@ namespace IngameScript
             {
                 get
                 {
-                    if(_groupBlocks == null)
-                    {
-                        LoadGroup();
-                    }
                     return _groupBlocks;
                 }
                 private set
@@ -55,7 +51,6 @@ namespace IngameScript
                     _identifier = value;
                 }
             }
-
             public bool Exists
             {
                 get
@@ -78,7 +73,6 @@ namespace IngameScript
                     _loaded = value;
                 }
             }
-
             public RequiredGroup(string _groupIdentifier,bool load = true)
             {
                 Identifier = _groupIdentifier;
@@ -87,16 +81,15 @@ namespace IngameScript
                 Loaded = false;
                 if(load) LoadGroup();
             }
-
             public bool LoadGroup()
             {
                 if(CheckGroupExists())
                 {
                     GroupBlocks = BlockFinding.GetGroupByName<T>(Identifier);
                     if(GroupBlocks != null)
-                    {
-                        Name = Identifier;
+                    { 
                         Loaded = true;
+                        Name = Identifier;           
                     }
                 }
                 Logging.ShowDebug();

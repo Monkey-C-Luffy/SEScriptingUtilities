@@ -17,13 +17,27 @@ namespace IngameScript
         {
             static Dictionary<string,IMyBlockGroup> groupsFound = new Dictionary<string,IMyBlockGroup>();
             static Dictionary<string,IMyTerminalBlock> blocksFound = new Dictionary<string,IMyTerminalBlock>();
-            //TODO:Check if method overloads cause SE problems
-            //TODO:Check if generic methods cause SE problems
-            //TODO:Check combinations of above two
+            private static BlockManager _blockManagerInstance;
+            public static BlockManager BlockManagerInstance
+            {
+                get
+                {
+                    return _blockManagerInstance;
+                }
+                set
+                {
+                    if(_blockManagerInstance == null)
+                    {
+                        _blockManagerInstance = value;
+                    }
+                }
+            }
+            //TODO:Try reimplement the Find and Get by key
             public static MyGridProgram gridProgram = Logging.gridProgram;
             public static bool FindBlocksByName(params string[] blockNames)
             {
                 List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
+                Dictionary<string,int> indexesOfFoundBlocks = new Dictionary<string,int>();
                 int BlocksCnt = 0;
                 gridProgram.GridTerminalSystem.GetBlocks(blocks);
                 try
@@ -42,6 +56,7 @@ namespace IngameScript
                             }
                             if(block.DisplayNameText == blockNames[i])
                             {
+                                if(!indexesOfFoundBlocks.ContainsKey(blockNames[i])) indexesOfFoundBlocks.Add(blockNames[i],i);
                                 FoundBlock(true,blockNames[i]);
                                 BlocksCnt++;
                             }
@@ -52,13 +67,24 @@ namespace IngameScript
                 {
                     Logging.DebugLog($"An error has occured finding the  blocks\nError:{e.Message}");
                 }
+                if(BlocksCnt < blockNames.Length)
+                {
+                    for(int i = 0;i < blockNames.Length;i++)
+                    {
+                        if(!indexesOfFoundBlocks.ContainsKey(blockNames[i]))
+                        {
+                            AcquiredBlock(false,blockNames[i]);
+                        }
+                    }
+                }          
                 return BlocksCnt == blockNames.Length ? true : false;
             }
             public static bool FindGroupsByName(params string[] groupNames)
             {
                 List<IMyBlockGroup> groups = new List<IMyBlockGroup>();
-                int GroupsCnt = 0;
+                Dictionary<string,int> indexesOfFoundGroups = new Dictionary<string, int>();
                 gridProgram.GridTerminalSystem.GetBlockGroups(groups);
+                int GroupsCnt = 0;
                 try
                 {
                     foreach(IMyBlockGroup group in groups)
@@ -75,9 +101,10 @@ namespace IngameScript
                             }
                             if(group.Name == groupNames[i])
                             {
-                                FoundGroup(true,groupNames[i]);
+                                if(!indexesOfFoundGroups.ContainsKey(groupNames[i])) indexesOfFoundGroups.Add(groupNames[i],i);
+                                AcquiredGroup(true,groupNames[i]);
                                 GroupsCnt++;
-                            }
+                            }                                          
                         }
                     }
                 }
@@ -85,9 +112,19 @@ namespace IngameScript
                 {
                     Logging.DebugLog($"An error has occured finding the  blocks\nError:{e.Message}");
                 }
+                if(GroupsCnt < groupNames.Length)
+                {
+                    for(int i = 0;i < groupNames.Length;i++)
+                    {
+                        if(!indexesOfFoundGroups.ContainsKey(groupNames[i]))
+                        {
+                            AcquiredGroup(false,groupNames[i]);
+                        }
+                    }
+                }             
                 return GroupsCnt == groupNames.Length ? true : false;
             }
-            public static T GetBlockByName<T>(string name) where T:class
+            public static T GetBlockByName<T>(string name) where T : class
             {
                 try
                 {
@@ -107,6 +144,7 @@ namespace IngameScript
                             return block;
                         }
                     }
+                    AcquiredBlock(false,name);
                 }
                 catch(Exception e)
                 {
@@ -135,6 +173,7 @@ namespace IngameScript
                             return block;
                         }
                     }
+                    AcquiredBlock(false,name);
                 }
                 catch(Exception e)
                 {
@@ -179,7 +218,7 @@ namespace IngameScript
                             }
                         }
                     }
-
+                    AcquiredGroup(false,name);
                 }
                 catch(Exception e)
                 {
@@ -198,7 +237,7 @@ namespace IngameScript
                     }
                     if(groupsFound.ContainsKey(name))
                     {
-                        container =  BlockUtilities.ConvertToTerminalBlockList(groupsFound[name]);
+                        container = BlockUtilities.ConvertToTerminalBlockList(groupsFound[name]);
                         return;
                     }
                     List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
@@ -223,7 +262,7 @@ namespace IngameScript
                             }
                         }
                     }
-
+                    AcquiredGroup(false,name);
                 }
                 catch(Exception e)
                 {
@@ -255,6 +294,7 @@ namespace IngameScript
                             return blockGroups[i];
                         }
                     }
+                    AcquiredGroup(false,name);
                 }
                 catch(Exception e)
                 {
@@ -288,7 +328,7 @@ namespace IngameScript
                             return retList;
                         }
                     }
-                    Logging.DebugLog($"Couldn't acquire block group with identifier:{name}",true);
+                    AcquiredGroup(false,name);
                 }
                 catch(Exception e)
                 {
@@ -319,8 +359,8 @@ namespace IngameScript
                     Logging.DebugLog($"Block '{(block == null ? blockIdentifier : (block as IMyTerminalBlock).DisplayNameText)}' was found!");
                 }
             }
-
-            public static void FoundGroup(bool found,string groupIdentifier,List<IMyTerminalBlock> group=null)
+            //TODO:Make a RequiredBlock,RequiredGroup FoundBlock so that the identifier required is given by user to RequiredBlock,RequiredGroup
+            public static void FoundGroup(bool found,string groupIdentifier,List<IMyTerminalBlock> group = null)
             {
                 if(!found)
                 {
@@ -375,7 +415,7 @@ namespace IngameScript
                     Logging.DebugLog($"Block '{(block == null ? blockIdentifier : block.DisplayNameText)}' was acquired!");
                 }
             }
-            public static void AcquiredBlock<T>(bool found,string blockIdentifier,T block = default(T)) where T:class
+            public static void AcquiredBlock<T>(bool found,string blockIdentifier,T block = default(T)) where T : class
             {
                 if(!found)
                 {

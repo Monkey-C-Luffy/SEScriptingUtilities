@@ -16,7 +16,7 @@ namespace IngameScript
         {
             public static bool DebugEnable { get; set; }
 
-            public static int MaxDebugLines { get;} = 20;
+            public const int maxDebugLines = 20;
 
             static List<string> debugStringsList = new List<string>();
 
@@ -45,10 +45,10 @@ namespace IngameScript
             public static void DebugLog(string debugString,bool showDebug = false)
             {
                 if(!DebugEnable) return;
-                if(debugStringsList.Count > MaxDebugLines)
+                if(maxDebugLines>0 &&debugStringsList.Count > maxDebugLines)
                 {
                     debugStringsList.RemoveAt(0);
-                }
+                }             
                 debugStringsList.Add(debugString);
                 if(showDebug) ShowDebug();
             }

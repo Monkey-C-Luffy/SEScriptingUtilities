@@ -21,10 +21,6 @@ namespace IngameScript
             {
                 get
                 {
-                    if(_block == null)
-                    {
-                        LoadBlock();
-                    }
                     return _block;
                 }
                 private set
@@ -54,7 +50,6 @@ namespace IngameScript
                     _identifier = value;
                 }
             }
-
             public bool Exists
             {
                 get
@@ -91,11 +86,12 @@ namespace IngameScript
             {
                 if(CheckBlockExists())
                 {
-                    Block = BlockFinding.GetBlockByName<T>(Identifier);                   
+                    Block = BlockFinding.GetBlockByName<T>(Identifier);
+                    Logging.DebugLog(Block.ToString(),true);
                     if(Block != default(T))
                     {
-                        Name = (Block as IMyTerminalBlock).DisplayNameText;
                         Loaded = true;
+                        Name = (Block as IMyTerminalBlock).DisplayNameText;
                     }
                 }
                 Logging.ShowDebug();
@@ -122,7 +118,6 @@ namespace IngameScript
                 return Block as IMyTerminalBlock == (other.Block as IMyTerminalBlock) && Identifier == other.Identifier;
             }
 
-            //TODO:Check if Conversions cause SE problems
             public static explicit operator T(RequiredBlock<T> block)
             {
                 return block.GetBlock<T>();
