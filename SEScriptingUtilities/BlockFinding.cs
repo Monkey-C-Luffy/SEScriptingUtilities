@@ -15,8 +15,8 @@ namespace IngameScript
     {
         public static class BlockFinding
         {
-            static Dictionary<string,IMyBlockGroup> groupsFound = new Dictionary<string,IMyBlockGroup>();
-            static Dictionary<string,IMyTerminalBlock> blocksFound = new Dictionary<string,IMyTerminalBlock>();
+            //static Dictionary<string,IMyBlockGroup> BlockManagerInstance.groupsFound = new Dictionary<string,IMyBlockGroup>();
+           // static Dictionary<string,IMyTerminalBlock> BlockManagerInstance.blocksFound = new Dictionary<string,IMyTerminalBlock>();
             private static BlockManager _blockManagerInstance;
             public static BlockManager BlockManagerInstance
             {
@@ -50,12 +50,12 @@ namespace IngameScript
                             {
                                 Logging.ShowException(new Exception("EmptyStringKeyException"),"Cannot search by empty key,try another key!");
                             }
-                            if(!blocksFound.ContainsKey(blockNames[i]))
-                            {
-                                blocksFound.Add(blockNames[i],block);
-                            }
                             if(block.DisplayNameText == blockNames[i])
                             {
+                                if(!BlockManagerInstance.blocksFound.ContainsKey(blockNames[i]))
+                                {
+                                    BlockManagerInstance.blocksFound.Add(blockNames[i],block);
+                                }
                                 if(!indexesOfFoundBlocks.ContainsKey(blockNames[i])) indexesOfFoundBlocks.Add(blockNames[i],i);
                                 FoundBlock(true,blockNames[i]);
                                 BlocksCnt++;
@@ -95,12 +95,12 @@ namespace IngameScript
                             {
                                 Logging.ShowException(new Exception("EmptyStringKeyException"),"Cannot search by empty key,try another key!");
                             }
-                            if(!groupsFound.ContainsKey(groupNames[i]))
-                            {
-                                groupsFound.Add(groupNames[i],group);
-                            }
                             if(group.Name == groupNames[i])
                             {
+                                if(!BlockManagerInstance.groupsFound.ContainsKey(groupNames[i]))
+                                {
+                                    BlockManagerInstance.groupsFound.Add(groupNames[i],group);
+                                }
                                 if(!indexesOfFoundGroups.ContainsKey(groupNames[i])) indexesOfFoundGroups.Add(groupNames[i],i);
                                 AcquiredGroup(true,groupNames[i]);
                                 GroupsCnt++;
@@ -133,7 +133,12 @@ namespace IngameScript
                         Logging.ShowException(new Exception("EmptyStringKeyException"),"Cannot search by empty key,try another key!");
                         return default(T);
                     }
-                    if(blocksFound.ContainsKey(name)) return blocksFound[name] as T;
+                    if(BlockManagerInstance.blocksFound.ContainsKey(name))
+                    {
+                        T block = BlockManagerInstance.blocksFound[name] as T;
+                        AcquiredBlock(true,name,block);
+                        return block;
+                    }
                     List<T> blocks = new List<T>();
                     gridProgram.GridTerminalSystem.GetBlocksOfType(blocks);
                     foreach(T block in blocks)
@@ -149,7 +154,7 @@ namespace IngameScript
                 catch(Exception e)
                 {
                     Logging.ShowDebug();
-                    Logging.ShowException(e);
+                    Logging.ShowException(e,$"Error trying to get block with name:{name}");
                 }
                 return default(T);
             }
@@ -162,7 +167,12 @@ namespace IngameScript
                         Logging.ShowException(new Exception("EmptyStringKeyException"),"Cannot search by empty key,try another key!");
                         return null;
                     }
-                    if(blocksFound.ContainsKey(name)) return blocksFound[name];
+                    if(BlockManagerInstance.blocksFound.ContainsKey(name))
+                    {
+                        IMyTerminalBlock block = BlockManagerInstance.blocksFound[name];
+                        AcquiredBlock(true,name,block);
+                        return block;
+                    }
                     List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
                     gridProgram.GridTerminalSystem.GetBlocks(blocks);
                     foreach(IMyTerminalBlock block in blocks)
@@ -191,9 +201,10 @@ namespace IngameScript
                         Logging.ShowException(new Exception("EmptyStringKeyException"),"Cannot search by empty key,try another key!");
                         return;
                     }
-                    if(groupsFound.ContainsKey(name))
+                    if(BlockManagerInstance.groupsFound.ContainsKey(name))
                     {
-                        container = BlockUtilities.ConvertToTypedList<T>(groupsFound[name]);
+                        container = BlockUtilities.ConvertToTypedList<T>(BlockManagerInstance.groupsFound[name]);
+                        AcquiredGroup(true,name,container);
                         return;
                     }
                     List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
@@ -235,9 +246,10 @@ namespace IngameScript
                         Logging.ShowException(new Exception("EmptyStringKeyException"),"Cannot search by empty key,try another key!");
                         return;
                     }
-                    if(groupsFound.ContainsKey(name))
+                    if(BlockManagerInstance.groupsFound.ContainsKey(name))
                     {
-                        container = BlockUtilities.ConvertToTerminalBlockList(groupsFound[name]);
+                        container = BlockUtilities.ConvertToTerminalBlockList(BlockManagerInstance.groupsFound[name]);
+                        AcquiredGroup(true,name,container);
                         return;
                     }
                     List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
@@ -279,9 +291,11 @@ namespace IngameScript
                         Logging.ShowException(new Exception("EmptyStringKeyException"),"Cannot search by empty key,try another key!");
                         return null;
                     }
-                    if(groupsFound.ContainsKey(name))
+                    if(BlockManagerInstance.groupsFound.ContainsKey(name))
                     {
-                        return groupsFound[name];
+                        IMyBlockGroup group = BlockManagerInstance.groupsFound[name];
+                        AcquiredGroup(true,name,group);
+                        return BlockManagerInstance.groupsFound[name];
                     }
                     List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
                     gridProgram.GridTerminalSystem.GetBlockGroups(blockGroups);
@@ -312,9 +326,11 @@ namespace IngameScript
                         Logging.ShowException(new Exception("EmptyStringKeyException"),"Cannot search by empty key,try another key!");
                         return null;
                     }
-                    if(groupsFound.ContainsKey(name))
+                    if(BlockManagerInstance.groupsFound.ContainsKey(name))
                     {
-                        return BlockUtilities.ConvertToTypedList<T>(groupsFound[name]);
+                        List<T> group = BlockUtilities.ConvertToTypedList<T>(BlockManagerInstance.groupsFound[name]);
+                        AcquiredGroup(true,name,group);
+                        return group;
                     }
                     List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
                     gridProgram.GridTerminalSystem.GetBlockGroups(blockGroups);

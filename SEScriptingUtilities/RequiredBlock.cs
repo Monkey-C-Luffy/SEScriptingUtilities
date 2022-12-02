@@ -87,7 +87,6 @@ namespace IngameScript
                 if(CheckBlockExists())
                 {
                     Block = BlockFinding.GetBlockByName<T>(Identifier);
-                    Logging.DebugLog(Block.ToString(),true);
                     if(Block != default(T))
                     {
                         Loaded = true;
