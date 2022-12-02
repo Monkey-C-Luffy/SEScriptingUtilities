@@ -104,6 +104,10 @@ namespace IngameScript
             }
             public T GetBlock<T>() where T : class
             {
+                if(!Loaded)
+                {
+                    LoadBlock();
+                }
                 return Block as T;
             }
 

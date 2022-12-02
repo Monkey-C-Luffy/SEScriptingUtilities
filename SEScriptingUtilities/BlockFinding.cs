@@ -15,8 +15,6 @@ namespace IngameScript
     {
         public static class BlockFinding
         {
-            //static Dictionary<string,IMyBlockGroup> BlockManagerInstance.groupsFound = new Dictionary<string,IMyBlockGroup>();
-           // static Dictionary<string,IMyTerminalBlock> BlockManagerInstance.blocksFound = new Dictionary<string,IMyTerminalBlock>();
             private static BlockManager _blockManagerInstance;
             public static BlockManager BlockManagerInstance
             {

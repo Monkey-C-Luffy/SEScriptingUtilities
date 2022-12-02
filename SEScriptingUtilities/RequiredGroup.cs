@@ -114,6 +114,7 @@ namespace IngameScript
 
             public static implicit operator List<T>(RequiredGroup<T> requiredGroup)
             {
+                if(!requiredGroup.Loaded) requiredGroup.LoadGroup();
                 return requiredGroup.GroupBlocks;
             }
         }
