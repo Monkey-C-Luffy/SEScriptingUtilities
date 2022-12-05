@@ -9,7 +9,8 @@ To setup your SE Scripting Utilities project:
 1. You first download the latest release as a zip.
 2. Then extract that zip preferably inside your visual studio solution folder for your script.
 3. The folder should contain a shared project file(.shproj) and the source code.
-4. All you then have to do is,right click on your visual studio solution in your Solution Explorer and add **existing** project,find the shared project and add it.  
+4. All you then have to do is,right click on your visual studio solution in your Solution Explorer and add **existing** project,find the shared project and add it. 
+5. Right click on references in your script project,and add reference,find the shared project.
 
 This should be it!All done!
 
