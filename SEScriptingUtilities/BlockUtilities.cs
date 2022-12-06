@@ -13,10 +13,6 @@ namespace IngameScript
     {
         public static class BlockUtilities
         {
-            public static List<IMyTerminalBlock> ConvertToTerminalBlockList<T>(RequiredGroup<T> requiredGroup) where T : class
-            {
-                return ConvertToTerminalBlockList(requiredGroup.GroupBlocks);
-            }
             public static List<IMyTerminalBlock> ConvertToTerminalBlockList<T>(List<T> groupBlocks) where T : class
             {
                 List<IMyTerminalBlock> terminalBlocksList = new List<IMyTerminalBlock>();

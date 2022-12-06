@@ -156,40 +156,6 @@ namespace IngameScript
                 }
                 return default(T);
             }
-            public static IMyTerminalBlock GetBlockByName(string name)
-            {
-                try
-                {
-                    if(name == "")
-                    {
-                        Logging.ShowException(new Exception("EmptyStringKeyException"),"Cannot search by empty key,try another key!");
-                        return null;
-                    }
-                    if(BlockManagerInstance.blocksFound.ContainsKey(name))
-                    {
-                        IMyTerminalBlock block = BlockManagerInstance.blocksFound[name];
-                        AcquiredBlock(true,name,block);
-                        return block;
-                    }
-                    List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
-                    gridProgram.GridTerminalSystem.GetBlocks(blocks);
-                    foreach(IMyTerminalBlock block in blocks)
-                    {
-                        if(block.DisplayNameText == name)
-                        {
-                            AcquiredBlock(true,name,block);
-                            return block;
-                        }
-                    }
-                    AcquiredBlock(false,name);
-                }
-                catch(Exception e)
-                {
-                    Logging.ShowDebug();
-                    Logging.ShowException(e);
-                }
-                return null;
-            }
             public static void GetGroupByName<T>(string name,List<T> container) where T : class
             {
                 try
@@ -235,86 +201,6 @@ namespace IngameScript
                     Logging.ShowException(e);
                 }
             }
-            public static void GetGroupByName(string name,List<IMyTerminalBlock> container)
-            {
-                try
-                {
-                    if(name == "")
-                    {
-                        Logging.ShowException(new Exception("EmptyStringKeyException"),"Cannot search by empty key,try another key!");
-                        return;
-                    }
-                    if(BlockManagerInstance.groupsFound.ContainsKey(name))
-                    {
-                        container = BlockUtilities.ConvertToTerminalBlockList(BlockManagerInstance.groupsFound[name]);
-                        AcquiredGroup(true,name,container);
-                        return;
-                    }
-                    List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
-                    gridProgram.GridTerminalSystem.GetBlockGroups(blockGroups);
-                    foreach(IMyBlockGroup group in blockGroups)
-                    {
-                        if(group.Name == name)
-                        {
-                            group.GetBlocksOfType(container);
-                            if(container == null)
-                            {
-                                Logging.ShowException(new Exception($"Null!Container of blocks for {group.Name} is NULL!"));
-                            }
-                            if(container.Count > 0)
-                            {
-                                AcquiredGroup(true,group.Name,container);
-                                Logging.DebugLog($"Acquired block group '{group.Name}'");
-                            }
-                            else
-                            {
-                                Logging.ShowException(new Exception($"Error!Container of blocks for {group.Name} is Empty!"));
-                            }
-                        }
-                    }
-                    AcquiredGroup(false,name);
-                }
-                catch(Exception e)
-                {
-                    Logging.ShowDebug();
-                    Logging.ShowException(e);
-                }
-            }
-            public static IMyBlockGroup GetGroupByName(string name)
-            {
-                try
-                {
-                    if(name == "")
-                    {
-                        Logging.ShowException(new Exception("EmptyStringKeyException"),"Cannot search by empty key,try another key!");
-                        return null;
-                    }
-                    if(BlockManagerInstance.groupsFound.ContainsKey(name))
-                    {
-                        IMyBlockGroup group = BlockManagerInstance.groupsFound[name];
-                        AcquiredGroup(true,name,group);
-                        return BlockManagerInstance.groupsFound[name];
-                    }
-                    List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
-                    gridProgram.GridTerminalSystem.GetBlockGroups(blockGroups);
-                    for(int i = 0;i < blockGroups.Count;i++)
-                    {
-                        if(blockGroups[i].Name == name)
-                        {
-                            AcquiredGroup(true,blockGroups[i].Name,blockGroups[i]);
-                            Logging.DebugLog($"Acquired block group '{blockGroups[i].Name}'");
-                            return blockGroups[i];
-                        }
-                    }
-                    AcquiredGroup(false,name);
-                }
-                catch(Exception e)
-                {
-                    Logging.ShowDebug();
-                    Logging.ShowException(e);
-                }
-                return null;
-            }
             public static List<T> GetGroupByName<T>(string name) where T : class
             {
                 try
@@ -351,15 +237,15 @@ namespace IngameScript
                 }
                 return null;
             }
-            public static void FoundBlock(bool found,string blockIdentifier,IMyTerminalBlock block = null)
+            public static void FoundBlock(bool found,string blockIdentifier) 
             {
                 if(!found)
                 {
-                    Logging.DebugLog($"Block with identifier:'{blockIdentifier}' was not found");
+                    Logging.DebugLog($"Block with identifier:'{blockIdentifier}' was not found!");
                 }
                 else
                 {
-                    Logging.DebugLog($"Block '{(block == null ? blockIdentifier : block.DisplayNameText)}' was found");
+                    Logging.DebugLog($"Block '{blockIdentifier}' was found!");
                 }
             }
             public static void FoundBlock<T>(bool found,string blockIdentifier,T block = default(T)) where T : class
@@ -374,17 +260,6 @@ namespace IngameScript
                 }
             }
             //TODO:Make a RequiredBlock,RequiredGroup FoundBlock so that the identifier required is given by user to RequiredBlock,RequiredGroup
-            public static void FoundGroup(bool found,string groupIdentifier,List<IMyTerminalBlock> group = null)
-            {
-                if(!found)
-                {
-                    Logging.DebugLog($"Block with identifier:'{groupIdentifier}' was not found");
-                }
-                else
-                {
-                    Logging.DebugLog($"Block '{ groupIdentifier}' was found");
-                }
-            }
             public static void FoundGroup<T>(bool found,string groupIdentifier,List<T> group = null)
             {
                 if(!found)
@@ -394,17 +269,6 @@ namespace IngameScript
                 else
                 {
                     Logging.DebugLog($"Block '{ groupIdentifier}' was found!");
-                }
-            }
-            public static void FoundGroup(bool found,string groupIdentifier,IMyBlockGroup group)
-            {
-                if(!found)
-                {
-                    Logging.DebugLog($"Block with identifier:'{groupIdentifier}' was not found");
-                }
-                else
-                {
-                    Logging.DebugLog($"Block '{(group != null ? group.Name : groupIdentifier)}' was found");
                 }
             }
             public static void FoundGroup(bool found,string groupIdentifier)
@@ -418,7 +282,7 @@ namespace IngameScript
                     Logging.DebugLog($"Block '{ groupIdentifier}' was found");
                 }
             }
-            public static void AcquiredBlock(bool found,string blockIdentifier,IMyTerminalBlock block = null)
+            public static void AcquiredBlock(bool found,string blockIdentifier) 
             {
                 if(!found)
                 {
@@ -426,7 +290,7 @@ namespace IngameScript
                 }
                 else
                 {
-                    Logging.DebugLog($"Block '{(block == null ? blockIdentifier : block.DisplayNameText)}' was acquired!");
+                    Logging.DebugLog($"Block '{ blockIdentifier}' was acquired!");
                 }
             }
             public static void AcquiredBlock<T>(bool found,string blockIdentifier,T block = default(T)) where T : class
@@ -440,17 +304,6 @@ namespace IngameScript
                     Logging.DebugLog($"Block '{(block == null ? blockIdentifier : (block as IMyTerminalBlock).DisplayNameText)}' was acquired!");
                 }
             }
-            public static void AcquiredGroup(bool found,string groupIdentifier,List<IMyTerminalBlock> group = null)
-            {
-                if(!found)
-                {
-                    Logging.DebugLog($"Block with identifier:'{groupIdentifier}' couldn't be acquired!");
-                }
-                else
-                {
-                    Logging.DebugLog($"Block '{ groupIdentifier}' was acquired!");
-                }
-            }
             public static void AcquiredGroup<T>(bool found,string groupIdentifier,List<T> group = null)
             {
                 if(!found)
@@ -462,7 +315,7 @@ namespace IngameScript
                     Logging.DebugLog($"Block '{ groupIdentifier}' was acquired!");
                 }
             }
-            public static void AcquiredGroup(bool found,string groupIdentifier,IMyBlockGroup group)
+            public static void AcquiredGroup(bool found,string groupIdentifier,IMyBlockGroup group = null)
             {
                 if(!found)
                 {
@@ -470,7 +323,7 @@ namespace IngameScript
                 }
                 else
                 {
-                    Logging.DebugLog($"Block '{(group != null ? group.Name : groupIdentifier)}' was acquired!");
+                    Logging.DebugLog($"Block '{ (group!=null?group.Name:groupIdentifier)}' was acquired!");
                 }
             }
             public static void AcquiredGroup(bool found,string groupIdentifier)

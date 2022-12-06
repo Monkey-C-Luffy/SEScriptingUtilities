@@ -101,7 +101,10 @@ namespace IngameScript
                 Exists = BlockFinding.FindBlocksByName(Identifier);
                 return Exists;
             }
-
+            public List<IMyTerminalBlock> ConvertToTerminalBlockList() 
+            {
+                return BlockUtilities.ConvertToTerminalBlockList(GroupBlocks);
+            }
             public override int GetHashCode()
             {
                 return Name.GetHashCode() + Identifier.GetHashCode() + GroupBlocks.GetHashCode();

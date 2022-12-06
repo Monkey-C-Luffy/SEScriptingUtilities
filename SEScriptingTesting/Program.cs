@@ -7,7 +7,7 @@ namespace IngameScript
     {
         public Program()
         {
-            Logging.gridProgram = this;
+            BlockManger.gridProgram = this;
             Logging.DebugEnable = true;
             BlockManager blockManager = new BlockManager();
             BlockFinding.BlockManagerInstance = blockManager;

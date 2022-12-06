@@ -26,6 +26,11 @@ namespace IngameScript
         {
             public Dictionary<string,IMyBlockGroup> groupsFound = new Dictionary<string,IMyBlockGroup>();
             public Dictionary<string,IMyTerminalBlock> blocksFound = new Dictionary<string,IMyTerminalBlock>();
+            public void Initialise(MyGridProgram gridProgram)
+            {
+                Logging.gridProgram = gridProgram;
+                BlockFinding.gridProgram = gridProgram;
+            }
         }
     }
 }

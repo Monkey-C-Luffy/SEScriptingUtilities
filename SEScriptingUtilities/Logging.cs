@@ -14,7 +14,18 @@ namespace IngameScript
     {
         public static class Logging
         {
-            public static bool DebugEnable { get; set; }
+            public static bool _debugEnable = true;
+            public static bool DebugEnable
+            {
+                get
+                {
+                    return _debugEnable;
+                }
+                set
+                {
+                    _debugEnable = value;
+                }
+            }
 
             public const int maxDebugLines = 20;
 
