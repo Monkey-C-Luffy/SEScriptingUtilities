@@ -13,7 +13,7 @@ namespace IngameScript
     {
         public static class BlockUtilities
         {
-            public static List<IMyTerminalBlock> ConvertToTerminalBlockList<T>(List<T> groupBlocks) where T : class
+            public static List<IMyTerminalBlock> ConvertToTerminalBlockList<T>(List<T> groupBlocks,Logger logger) where T : class
             {
                 List<IMyTerminalBlock> terminalBlocksList = new List<IMyTerminalBlock>();
                 try
@@ -25,11 +25,11 @@ namespace IngameScript
                 }
                 catch(Exception e)
                 {
-                    Logging.ShowException(e,$"Something went wrong trying to convert to {typeof(T)}!");
+                    logger.ShowException(e,$"Something went wrong trying to convert to {typeof(T)}!");
                 }
                 return terminalBlocksList;
             }
-            public static List<IMyTerminalBlock> ConvertToTerminalBlockList(IMyBlockGroup groupBlocks) 
+            public static List<IMyTerminalBlock> ConvertToTerminalBlockList(IMyBlockGroup groupBlocks,Logger logger) 
             {
                 List<IMyTerminalBlock> terminalBlocksList = new List<IMyTerminalBlock>();
                 try
@@ -38,11 +38,11 @@ namespace IngameScript
                 }
                 catch(Exception e)
                 {
-                    Logging.ShowException(e,$"Something went wrong trying to convert to TerminalBlockList!");
+                    logger.ShowException(e,$"Something went wrong trying to convert to TerminalBlockList!");
                 }
                 return terminalBlocksList;
             }
-            public static List<T> ConvertToTypedList<T>(List<IMyTerminalBlock> groupBlocks)
+            public static List<T> ConvertToTypedList<T>(List<IMyTerminalBlock> groupBlocks,Logger logger)
          where T : class
             {
                 List<T> typedList = new List<T>();
@@ -55,11 +55,11 @@ namespace IngameScript
                 }
                 catch(Exception e)
                 {
-                    Logging.ShowException(e,$"Something went wrong trying to convert to List of {typeof(T)}!");
+                    logger.ShowException(e,$"Something went wrong trying to convert to List of {typeof(T)}!");
                 }
                 return typedList;
             }
-            public static List<T> ConvertToTypedList<T>(IMyBlockGroup groupBlocks)
+            public static List<T> ConvertToTypedList<T>(IMyBlockGroup groupBlocks,Logger logger)
          where T : class
             {
                 List<T> typedList = new List<T>();
@@ -70,7 +70,7 @@ namespace IngameScript
                 }
                 catch(Exception e)
                 {
-                    Logging.ShowException(e,$"Something went wrong trying to convert to List of {typeof(T)}!");
+                    logger.ShowException(e,$"Something went wrong trying to convert to List of {typeof(T)}!");
                 }
                 return typedList;
             }

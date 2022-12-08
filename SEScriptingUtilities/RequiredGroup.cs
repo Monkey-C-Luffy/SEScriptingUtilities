@@ -13,6 +13,18 @@ namespace IngameScript
     {
         public class RequiredGroup<T> : IEquatable<RequiredGroup<T>> where T : class
         {
+            private BlockManager _blockManagerInstance;
+            public BlockManager BlockManager
+            {
+                get
+                {
+                    return _blockManagerInstance;
+                }
+                set
+                {
+                    if(_blockManagerInstance == null) _blockManagerInstance = value;
+                }
+            }
             private List<T> _groupBlocks = null;
             public List<T> GroupBlocks
             {
@@ -85,20 +97,20 @@ namespace IngameScript
             {
                 if(CheckGroupExists())
                 {
-                    GroupBlocks = BlockFinding.GetGroupByName<T>(Identifier);
+                    GroupBlocks = BlockManager.BlockFinderInstance.GetGroupByName<T>(Identifier);
                     if(GroupBlocks != null)
                     { 
                         Loaded = true;
                         Name = Identifier;           
                     }
                 }
-                Logging.ShowDebug();
+                BlockManager.LoggerInstance.ShowDebug();
                 return Loaded;
             }
 
             public bool CheckGroupExists()
             {
-                Exists = BlockFinding.FindBlocksByName(Identifier);
+                Exists = BlockManager.BlockFinderInstance.FindBlocksByName(Identifier);
                 return Exists;
             }
             public List<IMyTerminalBlock> ConvertToTerminalBlockList() 

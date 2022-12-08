@@ -26,10 +26,53 @@ namespace IngameScript
         {
             public Dictionary<string,IMyBlockGroup> groupsFound = new Dictionary<string,IMyBlockGroup>();
             public Dictionary<string,IMyTerminalBlock> blocksFound = new Dictionary<string,IMyTerminalBlock>();
-            public void Initialise(MyGridProgram gridProgram)
+
+            public int requiredBlocksCnt = 0;
+            public int requiredGroupsCnt = 0;
+
+            private BlockFinder _blockFinderInstance;
+            public BlockFinder BlockFinderInstance
             {
-                Logging.gridProgram = gridProgram;
-                BlockFinding.gridProgram = gridProgram;
+                get
+                {
+                    return _blockFinderInstance;
+                }
+                set
+                {
+                    if(_blockFinderInstance == null) _blockFinderInstance = value;
+                }
+            }
+
+            private Logger _loggerInstance;
+            public Logger LoggerInstance
+            {
+                get
+                {
+                    return _loggerInstance;
+                }
+                set
+                {
+                    if(_loggerInstance == null) _loggerInstance = value;
+                }
+            }
+
+            private MyGridProgram _programInstance;
+            public MyGridProgram ProgramInstance
+            {
+                get
+                {
+                    return _programInstance;
+                }
+                set
+                {
+                    if(_programInstance == null) _programInstance = value;
+                }
+            }
+            public bool CheckAllBlocksAndGroupsFound()
+            {
+                if(blocksFound.Count != requiredBlocksCnt) return false;
+                if(groupsFound.Count != requiredGroupsCnt) return false;
+                return true;
             }
         }
     }

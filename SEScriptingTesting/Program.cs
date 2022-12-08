@@ -7,10 +7,10 @@ namespace IngameScript
     {
         public Program()
         {
-            BlockManger.gridProgram = this;
-            Logging.DebugEnable = true;
+            BlockFinder blockFinder = new BlockFinder();
+            Logger logger = new Logger();
+            logger.DebugEnable = true;
             BlockManager blockManager = new BlockManager();
-            BlockFinding.BlockManagerInstance = blockManager;
             RequiredBlock<IMyMotorStator> rotor = new RequiredBlock<IMyMotorStator>("Rotor",false);
             rotor.LoadBlock();
             Runtime.UpdateFrequency = UpdateFrequency.Update1;

@@ -12,10 +12,10 @@ namespace IngameScript
 {
     partial class Program
     {
-        public static class Logging
+        public class Logger
         {
-            public static bool _debugEnable = true;
-            public static bool DebugEnable
+            public bool _debugEnable = true;
+            public bool DebugEnable
             {
                 get
                 {
@@ -31,29 +31,48 @@ namespace IngameScript
 
             static List<string> debugStringsList = new List<string>();
 
-            public static MyGridProgram gridProgram;
-
-            public static int InstructionsCount
+            private BlockManager _blockManagerInstance;
+            public BlockManager BlockManager
             {
                 get
                 {
-                    return gridProgram.Runtime.CurrentInstructionCount;
+                    return _blockManagerInstance;
+                }
+                set
+                {
+                    if(_blockManagerInstance == null) _blockManagerInstance = value;
                 }
             }
-            public static void ShowInstructionCount(string message="")
+
+            public MyGridProgram ProgramInstance
+            {
+                get
+                {
+                    if(_blockManagerInstance != null) return _blockManagerInstance.ProgramInstance;
+                    return null;
+                }
+            }
+            public int InstructionsCount
+            {
+                get
+                {
+                    return ProgramInstance.Runtime.CurrentInstructionCount;
+                }
+            }
+            public void ShowInstructionCount(string message="")
             {
                 DebugLog($"Instructions count:{InstructionsCount},at {message}",true);
             }
-            public static void ShowDebug()
+            public void ShowDebug()
             {
                 if(!DebugEnable) return;
                 for(int i = 0;i < debugStringsList.Count;i++)
                 {
-                    gridProgram.Echo(debugStringsList[i]);
+                    ProgramInstance.Echo(debugStringsList[i]);
                 }
             }
 
-            public static void DebugLog(string debugString,bool showDebug = false)
+            public void DebugLog(string debugString,bool showDebug = false)
             {
                 if(!DebugEnable) return;
                 if(maxDebugLines>0 &&debugStringsList.Count > maxDebugLines)
@@ -63,9 +82,9 @@ namespace IngameScript
                 debugStringsList.Add(debugString);
                 if(showDebug) ShowDebug();
             }
-            public static void ShowException(Exception e,string extraMessage = "")
+            public void ShowException(Exception e,string extraMessage = "")
             {
-                gridProgram.Echo($"An error happened: {extraMessage}:\n{e.Message}{e.StackTrace}");
+                ProgramInstance.Echo($"An error happened: {extraMessage}:\n{e.Message}{e.StackTrace}");
             }
         }
     }

@@ -73,6 +73,18 @@ namespace IngameScript
                 }
             }
 
+            private BlockManager _blockManagerInstance;
+            public BlockManager BlockManager
+            {
+                get
+                {
+                    return _blockManagerInstance;
+                }
+                set
+                {
+                    if(_blockManagerInstance == null) _blockManagerInstance = value;
+                }
+            }
             public RequiredBlock(string blockIdentifier,bool load = true)
             {
                 Identifier = blockIdentifier;
@@ -86,20 +98,20 @@ namespace IngameScript
             {
                 if(CheckBlockExists())
                 {
-                    Block = BlockFinding.GetBlockByName<T>(Identifier);
+                    Block = BlockManager.BlockFinderInstance.GetBlockByName<T>(Identifier);
                     if(Block != default(T))
                     {
                         Loaded = true;
                         Name = (Block as IMyTerminalBlock).DisplayNameText;
                     }
                 }
-                Logging.ShowDebug();
+                BlockManager.LoggerInstance.ShowDebug();
                 return Loaded;
             }
 
             public bool CheckBlockExists()
             {
-                Exists = BlockFinding.FindBlocksByName(Identifier);
+                Exists = BlockManager.BlockFinderInstance.FindBlocksByName(Identifier);
                 return Exists;
             }
             public T GetBlock<T>() where T : class
