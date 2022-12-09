@@ -146,7 +146,7 @@ namespace IngameScript
                     }
                     if(groupsFound.ContainsKey(name))
                     {
-                        container = BlockUtilities.ConvertToTypedList<T>(groupsFound[name],_loggerInstance);
+                        groupsFound[name].GetBlocksOfType(container);
                         _loggerInstance.DebugLog($"Group '{groupsFound[name]}' was acquired!");
                         return;
                     }
@@ -190,7 +190,7 @@ namespace IngameScript
                     }
                     if(groupsFound.ContainsKey(name))
                     {
-                        List<T> group = BlockUtilities.ConvertToTypedList<T>(groupsFound[name],_loggerInstance);
+                        List<T> group = ConvertToTypedList<T>(groupsFound[name],_loggerInstance);
                         _loggerInstance.DebugLog($"Group '{groupsFound[name]}' was acquired!");
                         return group;
                     }
@@ -225,6 +225,21 @@ namespace IngameScript
                     _loggerInstance.ShowException(e);
                 }
                 return null;
+            }
+            public static List<T> ConvertToTypedList<T>(IMyBlockGroup groupBlocks,Logger logger)
+         where T : class
+            {
+                List<T> typedList = new List<T>();
+
+                try
+                {
+                    groupBlocks.GetBlocksOfType(typedList);
+                }
+                catch(Exception e)
+                {
+                    logger.ShowException(e,$"Something went wrong trying to convert to List of {typeof(T)}!");
+                }
+                return typedList;
             }
             public bool CheckAllBlocksAndGroupsFound()
             {

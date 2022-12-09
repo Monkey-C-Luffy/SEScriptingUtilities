@@ -27,12 +27,10 @@ namespace IngameScript
             public readonly BlockFinder blockFinder;
 
             public readonly Logger logger;
-
-            public readonly MyGridProgram programInstance;
-            public UtilityManager(MyGridProgram gridProgram)
+            public UtilityManager(MyGridProgram gridProgram,Logger _logger=null,BlockFinder _blockFinder=null)
             {
-                logger = new Logger(gridProgram);
-                blockFinder = new BlockFinder(gridProgram,logger);
+                logger = _logger ?? new Logger(gridProgram);
+                blockFinder = _blockFinder ?? new BlockFinder(gridProgram,logger);
             }
         }
     }

@@ -7,9 +7,10 @@ namespace IngameScript
     {
         public Program()
         {
-            UtilityManager utilMngr = new UtilityManager(this);
-            RequiredBlock<IMyMotorStator> rotor = new RequiredBlock<IMyMotorStator>(utilMngr,"Rotor",false);
-            RequiredGroup<IMyMotorStator> group = new RequiredGroup<IMyMotorStator>(utilMngr,"Group",false);
+            Logger logger = new Logger(this);
+            BlockFinder blockFinder = new BlockFinder(this,logger);
+            UtilityManager utilMngr = new UtilityManager(this,logger,blockFinder);
+
             Runtime.UpdateFrequency = UpdateFrequency.Update1;
         }
 

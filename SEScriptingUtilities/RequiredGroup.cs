@@ -6,6 +6,7 @@ Copyright (c) 2022 Monkey C Luffy
 using System;
 using System.Collections.Generic;
 using Sandbox.ModAPI.Ingame;
+using static IngameScript.Program;
 
 namespace IngameScript
 {
@@ -104,7 +105,19 @@ namespace IngameScript
             }
             public List<IMyTerminalBlock> ConvertToTerminalBlockList() 
             {
-                return BlockUtilities.ConvertToTerminalBlockList(GroupBlocks,_utilityManager.logger);
+                List<IMyTerminalBlock> terminalBlocksList = new List<IMyTerminalBlock>();
+                try
+                {
+                    for(int i = 0;i < _groupBlocks.Count;i++)
+                    {
+                        terminalBlocksList.Add(_groupBlocks[i] as IMyTerminalBlock);
+                    }
+                }
+                catch(Exception e)
+{
+                    _utilityManager.logger.ShowException(e,$"Something went wrong trying to convert to {typeof(T)}!");
+                }
+                return terminalBlocksList;
             }
 
             public List<T> GetGroup(bool load=true)
