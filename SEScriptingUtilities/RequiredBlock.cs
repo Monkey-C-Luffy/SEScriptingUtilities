@@ -73,20 +73,10 @@ namespace IngameScript
                 }
             }
 
-            private BlockManager _blockManagerInstance;
-            public BlockManager BlockManager
+            private UtilityManager _utilityManager;
+            public RequiredBlock(UtilityManager utilityManager,string blockIdentifier,bool load = true)
             {
-                get
-                {
-                    return _blockManagerInstance;
-                }
-                set
-                {
-                    if(_blockManagerInstance == null) _blockManagerInstance = value;
-                }
-            }
-            public RequiredBlock(string blockIdentifier,bool load = true)
-            {
+                _utilityManager = utilityManager;
                 Identifier = blockIdentifier;
                 Name = "";
                 Exists = false;
@@ -98,31 +88,27 @@ namespace IngameScript
             {
                 if(CheckBlockExists())
                 {
-                    Block = BlockManager.BlockFinderInstance.GetBlockByName<T>(Identifier);
+                    Block = _utilityManager.blockFinder.GetBlockByName<T>(Identifier);
                     if(Block != default(T))
                     {
                         Loaded = true;
                         Name = (Block as IMyTerminalBlock).DisplayNameText;
                     }
                 }
-                BlockManager.LoggerInstance.ShowDebug();
+                _utilityManager.logger.ShowDebug();
                 return Loaded;
             }
 
             public bool CheckBlockExists()
             {
-                Exists = BlockManager.BlockFinderInstance.FindBlocksByName(Identifier);
+                Exists = _utilityManager.blockFinder.FindBlocksByName(Identifier);
                 return Exists;
             }
-            public T GetBlock<T>() where T : class
+            public T GetBlock(bool load=true)
             {
-                if(!Loaded)
-                {
-                    LoadBlock();
-                }
-                return Block as T;
+                if(!Loaded && load) LoadBlock();
+                return Block;
             }
-
             public override int GetHashCode()
             {
                 return Name.GetHashCode() + Identifier.GetHashCode() + Block.GetHashCode();
@@ -135,7 +121,7 @@ namespace IngameScript
 
             public static explicit operator T(RequiredBlock<T> block)
             {
-                return block.GetBlock<T>();
+                return block.GetBlock();
             }
         }
     }

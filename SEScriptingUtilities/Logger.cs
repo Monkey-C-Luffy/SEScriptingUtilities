@@ -31,33 +31,17 @@ namespace IngameScript
 
             static List<string> debugStringsList = new List<string>();
 
-            private BlockManager _blockManagerInstance;
-            public BlockManager BlockManager
-            {
-                get
-                {
-                    return _blockManagerInstance;
-                }
-                set
-                {
-                    if(_blockManagerInstance == null) _blockManagerInstance = value;
-                }
-            }
-
-            public MyGridProgram ProgramInstance
-            {
-                get
-                {
-                    if(_blockManagerInstance != null) return _blockManagerInstance.ProgramInstance;
-                    return null;
-                }
-            }
+            private readonly MyGridProgram _programInstance;
             public int InstructionsCount
             {
                 get
                 {
-                    return ProgramInstance.Runtime.CurrentInstructionCount;
+                    return _programInstance.Runtime.CurrentInstructionCount;
                 }
+            }
+            public Logger(MyGridProgram programInstance)
+            {
+                _programInstance = programInstance;
             }
             public void ShowInstructionCount(string message="")
             {
@@ -68,10 +52,9 @@ namespace IngameScript
                 if(!DebugEnable) return;
                 for(int i = 0;i < debugStringsList.Count;i++)
                 {
-                    ProgramInstance.Echo(debugStringsList[i]);
+                    _programInstance.Echo(debugStringsList[i]);
                 }
             }
-
             public void DebugLog(string debugString,bool showDebug = false)
             {
                 if(!DebugEnable) return;
@@ -84,8 +67,8 @@ namespace IngameScript
             }
             public void ShowException(Exception e,string extraMessage = "")
             {
-                ProgramInstance.Echo($"An error happened: {extraMessage}:\n{e.Message}{e.StackTrace}");
-            }
+                _programInstance.Echo($"An error happened: {extraMessage}:\n{e.Message}{e.StackTrace}");
+            }       
         }
     }
 }

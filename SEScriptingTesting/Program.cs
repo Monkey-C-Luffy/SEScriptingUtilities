@@ -7,12 +7,9 @@ namespace IngameScript
     {
         public Program()
         {
-            BlockFinder blockFinder = new BlockFinder();
-            Logger logger = new Logger();
-            logger.DebugEnable = true;
-            BlockManager blockManager = new BlockManager();
-            RequiredBlock<IMyMotorStator> rotor = new RequiredBlock<IMyMotorStator>("Rotor",false);
-            rotor.LoadBlock();
+            UtilityManager utilMngr = new UtilityManager(this);
+            RequiredBlock<IMyMotorStator> rotor = new RequiredBlock<IMyMotorStator>(utilMngr,"Rotor",false);
+            RequiredGroup<IMyMotorStator> group = new RequiredGroup<IMyMotorStator>(utilMngr,"Group",false);
             Runtime.UpdateFrequency = UpdateFrequency.Update1;
         }
 

@@ -13,18 +13,7 @@ namespace IngameScript
     {
         public class RequiredGroup<T> : IEquatable<RequiredGroup<T>> where T : class
         {
-            private BlockManager _blockManagerInstance;
-            public BlockManager BlockManager
-            {
-                get
-                {
-                    return _blockManagerInstance;
-                }
-                set
-                {
-                    if(_blockManagerInstance == null) _blockManagerInstance = value;
-                }
-            }
+            private UtilityManager _utilityManager;
             private List<T> _groupBlocks = null;
             public List<T> GroupBlocks
             {
@@ -85,8 +74,9 @@ namespace IngameScript
                     _loaded = value;
                 }
             }
-            public RequiredGroup(string _groupIdentifier,bool load = true)
+            public RequiredGroup(UtilityManager utilityManager,string _groupIdentifier,bool load = true)
             {
+                _utilityManager = utilityManager;
                 Identifier = _groupIdentifier;
                 Name = Identifier;
                 Exists = false;
@@ -97,31 +87,35 @@ namespace IngameScript
             {
                 if(CheckGroupExists())
                 {
-                    GroupBlocks = BlockManager.BlockFinderInstance.GetGroupByName<T>(Identifier);
+                    GroupBlocks = _utilityManager.blockFinder.GetGroupByName<T>(Identifier);
                     if(GroupBlocks != null)
                     { 
                         Loaded = true;
                         Name = Identifier;           
                     }
                 }
-                BlockManager.LoggerInstance.ShowDebug();
+                _utilityManager.logger.ShowDebug();
                 return Loaded;
             }
-
             public bool CheckGroupExists()
             {
-                Exists = BlockManager.BlockFinderInstance.FindBlocksByName(Identifier);
+                Exists = _utilityManager.blockFinder.FindBlocksByName(Identifier);
                 return Exists;
             }
             public List<IMyTerminalBlock> ConvertToTerminalBlockList() 
             {
-                return BlockUtilities.ConvertToTerminalBlockList(GroupBlocks);
+                return BlockUtilities.ConvertToTerminalBlockList(GroupBlocks,_utilityManager.logger);
+            }
+
+            public List<T> GetGroup(bool load=true)
+            {
+                if(!Loaded && load) LoadGroup();
+                return GroupBlocks;
             }
             public override int GetHashCode()
             {
                 return Name.GetHashCode() + Identifier.GetHashCode() + GroupBlocks.GetHashCode();
             }
-
             public bool Equals(RequiredGroup<T> other)
             {
                 return GroupBlocks == other.GroupBlocks && Identifier == other.Identifier;
@@ -129,8 +123,7 @@ namespace IngameScript
 
             public static implicit operator List<T>(RequiredGroup<T> requiredGroup)
             {
-                if(!requiredGroup.Loaded) requiredGroup.LoadGroup();
-                return requiredGroup.GroupBlocks;
+                return requiredGroup.GetGroup();
             }
         }
     }
