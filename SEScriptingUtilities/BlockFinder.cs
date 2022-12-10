@@ -101,7 +101,7 @@ namespace IngameScript
                 }             
                 return requiredGroupsCnt == groupNames.Length ? true : false;
             }
-            public T GetBlockByName<T>(string name) where T : class
+            public T GetBlockByName<T>(string name) where T : class, IMyTerminalBlock
             {
                 try
                 {
@@ -135,7 +135,7 @@ namespace IngameScript
                 }
                 return default(T);
             }
-            public void GetGroupByName<T>(string name,List<T> container) where T : class
+            public void GetGroupByName<T>(string name,List<T> container) where T : class,IMyTerminalBlock
             {
                 try
                 {
@@ -179,7 +179,7 @@ namespace IngameScript
                     _loggerInstance.ShowException(e);
                 }
             }
-            public List<T> GetGroupByName<T>(string name) where T : class
+            public List<T> GetGroupByName<T>(string name) where T : class,IMyTerminalBlock
             {
                 try
                 {
@@ -227,7 +227,7 @@ namespace IngameScript
                 return null;
             }
             public static List<T> ConvertToTypedList<T>(IMyBlockGroup groupBlocks,Logger logger)
-         where T : class
+         where T : class, IMyTerminalBlock
             {
                 List<T> typedList = new List<T>();
 

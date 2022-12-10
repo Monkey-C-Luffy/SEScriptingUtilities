@@ -6,13 +6,15 @@ Copyright (c) 2022 Monkey C Luffy
 using System;
 using System.Collections.Generic;
 using Sandbox.ModAPI.Ingame;
+using Sandbox.ModAPI.Interfaces;
+using VRage.Collections;
 using static IngameScript.Program;
 
 namespace IngameScript
 {
     partial class Program
     {
-        public class RequiredGroup<T> : IEquatable<RequiredGroup<T>> where T : class
+        public class RequiredGroup<T> : IEquatable<RequiredGroup<T>> where T : class,IMyTerminalBlock
         {
             private UtilityManager _utilityManager;
             private List<T> _groupBlocks = null;
@@ -110,7 +112,7 @@ namespace IngameScript
                 {
                     for(int i = 0;i < _groupBlocks.Count;i++)
                     {
-                        terminalBlocksList.Add(_groupBlocks[i] as IMyTerminalBlock);
+                        terminalBlocksList.Add(_groupBlocks[i]);
                     }
                 }
                 catch(Exception e)

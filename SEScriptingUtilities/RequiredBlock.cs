@@ -10,7 +10,7 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class RequiredBlock<T> : IEquatable<RequiredBlock<T>> where T : class
+        public class RequiredBlock<T> : IEquatable<RequiredBlock<T>> where T : class,IMyTerminalBlock
         {
             private T _block = default(T);
             private string _name;
@@ -92,7 +92,7 @@ namespace IngameScript
                     if(Block != default(T))
                     {
                         Loaded = true;
-                        Name = (Block as IMyTerminalBlock).DisplayNameText;
+                        Name = Block.DisplayNameText;
                     }
                 }
                 _utilityManager.logger.ShowDebug();
@@ -116,7 +116,7 @@ namespace IngameScript
 
             public bool Equals(RequiredBlock<T> other)
             {
-                return Block as IMyTerminalBlock == (other.Block as IMyTerminalBlock) && Identifier == other.Identifier;
+                return Block == other.Block && Identifier == other.Identifier;
             }
 
             public static explicit operator T(RequiredBlock<T> block)

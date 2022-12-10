@@ -14,7 +14,7 @@ namespace IngameScript
     {
         public class Logger
         {
-            public bool _debugEnable = true;
+            private bool _debugEnable = true;
             public bool DebugEnable
             {
                 get

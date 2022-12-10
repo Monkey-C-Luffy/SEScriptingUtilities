@@ -10,6 +10,7 @@ namespace IngameScript
             Logger logger = new Logger(this);
             BlockFinder blockFinder = new BlockFinder(this,logger);
             UtilityManager utilMngr = new UtilityManager(this,logger,blockFinder);
+            RequiredBlock<IMyMotorStator> rotor = new RequiredBlock<IMyMotorStator>(utilMngr,"Rotor");
 
             Runtime.UpdateFrequency = UpdateFrequency.Update1;
         }
