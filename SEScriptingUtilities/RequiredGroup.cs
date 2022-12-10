@@ -6,15 +6,16 @@ Copyright (c) 2022 Monkey C Luffy
 using System;
 using System.Collections.Generic;
 using Sandbox.ModAPI.Ingame;
+using System.Linq;
 using Sandbox.ModAPI.Interfaces;
-using VRage.Collections;
 using static IngameScript.Program;
+using System.Collections;
 
 namespace IngameScript
 {
     partial class Program
     {
-        public class RequiredGroup<T> : IEquatable<RequiredGroup<T>> where T : class,IMyTerminalBlock
+        public class RequiredGroup<T> : IEquatable<RequiredGroup<T>>,IEnumerable<T> where T : class,IMyTerminalBlock
         {
             private UtilityManager _utilityManager;
             private List<T> _groupBlocks = null;
@@ -86,6 +87,29 @@ namespace IngameScript
                 Loaded = false;
                 if(load) LoadGroup();
             }
+
+            public T this[int i]
+            {
+                get { return GroupBlocks[i]; }
+                set { GroupBlocks[i] = value; }
+            }
+            public bool ApplyActionToBlocks(Action<T> action)
+            {
+                try
+                {
+                    foreach(T block in GroupBlocks)
+                    {
+                        action.Invoke(block);
+                    }
+                    _utilityManager.logger.DebugLine($"Succesfully applied action to block group of RequiredGroup '{Name}'!");
+                }
+                catch(Exception e)
+                {
+                    _utilityManager.logger.ShowException(e,$"Tried applying action:{action.Method} to blocks of type:{typeof(T)}\nin RequiredBlock with name {_name}");
+                    return false;
+                }
+                return true;
+            }
             public bool LoadGroup()
             {
                 if(CheckGroupExists())
@@ -102,7 +126,7 @@ namespace IngameScript
             }
             public bool CheckGroupExists()
             {
-                Exists = _utilityManager.blockFinder.FindBlocksByName(Identifier);
+                Exists = _utilityManager.blockFinder.FindGroupsByName(Identifier);
                 return Exists;
             }
             public List<IMyTerminalBlock> ConvertToTerminalBlockList() 
@@ -134,6 +158,24 @@ namespace IngameScript
             public bool Equals(RequiredGroup<T> other)
             {
                 return GroupBlocks == other.GroupBlocks && Identifier == other.Identifier;
+            }
+
+            public IEnumerator<T> GetEnumerator()
+            {
+                foreach(T block in GroupBlocks)
+                {
+                    if(block == default(T)) break;
+                    yield return block;
+                }
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                foreach(T block in GroupBlocks)
+                {
+                    if(block == default(T)) break;
+                    yield return block;
+                }
             }
 
             public static implicit operator List<T>(RequiredGroup<T> requiredGroup)

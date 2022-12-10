@@ -45,7 +45,7 @@ namespace IngameScript
             }
             public void ShowInstructionCount(string message="")
             {
-                DebugLog($"Instructions count:{InstructionsCount},at {message}",true);
+                DebugLine($"Instructions count:{InstructionsCount},at {message}");
             }
             public void ShowDebug()
             {
@@ -64,6 +64,11 @@ namespace IngameScript
                 }             
                 debugStringsList.Add(debugString);
                 if(showDebug) ShowDebug();
+            }
+            public void DebugLine(string debugLine)
+            {
+                if(!DebugEnable) return;
+                _programInstance.Echo(debugLine);
             }
             public void ShowException(Exception e,string extraMessage = "")
             {

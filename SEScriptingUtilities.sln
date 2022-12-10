@@ -7,9 +7,13 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SEScriptingUtilities", "SES
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEScriptingTesting", "SEScriptingTesting\SEScriptingTesting.csproj", "{1C14BF44-0E6D-4E18-AE63-1AD492059664}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MDK-Mockups", "..\..\MDKMockups\MDK-Mockups.shproj", "{33863C91-80F6-4ABC-A735-3934A61D494C}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\..\MDKMockups\MDK-Mockups.projitems*{1c14bf44-0e6d-4e18-ae63-1ad492059664}*SharedItemsImports = 4
 		SEScriptingUtilities\SEScriptingUtilities.projitems*{1c14bf44-0e6d-4e18-ae63-1ad492059664}*SharedItemsImports = 4
+		..\..\MDKMockups\MDK-Mockups.projitems*{33863c91-80f6-4abc-a735-3934a61d494c}*SharedItemsImports = 13
 		SEScriptingUtilities\SEScriptingUtilities.projitems*{61eba249-19f3-48b6-a25b-a4cee90168ba}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

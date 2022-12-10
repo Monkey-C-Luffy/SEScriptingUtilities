@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Sandbox.ModAPI.Ingame;
 
 namespace IngameScript
@@ -10,7 +11,14 @@ namespace IngameScript
             Logger logger = new Logger(this);
             BlockFinder blockFinder = new BlockFinder(this,logger);
             UtilityManager utilMngr = new UtilityManager(this,logger,blockFinder);
-            RequiredBlock<IMyMotorStator> rotor = new RequiredBlock<IMyMotorStator>(utilMngr,"Rotor");
+            RequiredGroup<IMyMotorStator> rotors = new RequiredGroup<IMyMotorStator>(utilMngr,"Rotors");
+
+            rotors.ApplyActionToBlocks((rotor)=>rotor.Enabled=false);
+
+            foreach(var rotor in rotors)
+            {
+                logger.DebugLine(rotor.Enabled.ToString());
+            }
 
             Runtime.UpdateFrequency = UpdateFrequency.Update1;
         }
