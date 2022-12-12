@@ -72,7 +72,7 @@ namespace IngameScript
             }
             public void ShowException(Exception e,string extraMessage = "")
             {
-                _programInstance.Echo($"An error happened: {extraMessage}:\n{e.Message}{e.StackTrace}");
+                _programInstance.Echo($"An error happened:{e.Message}\nStackTrace:{e.StackTrace}\nFurther details:{extraMessage}");
             }       
         }
     }

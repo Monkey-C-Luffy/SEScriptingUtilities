@@ -15,9 +15,8 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class RequiredGroup<T> : IEquatable<RequiredGroup<T>>,IEnumerable<T> where T : class,IMyTerminalBlock
+        public class RequiredGroup<T> : RequiredBase,IEquatable<RequiredGroup<T>>,IEnumerable<T> where T : class,IMyTerminalBlock
         {
-            private UtilityManager _utilityManager;
             private List<T> _groupBlocks = null;
             public List<T> GroupBlocks
             {
@@ -30,54 +29,7 @@ namespace IngameScript
                     _groupBlocks = value;
                 }
             }
-            private string _name;
-            private string _identifier;
-            private bool _exists;
-            private bool _loaded;
-            public string Name
-            {
-                get
-                {
-                    return _name;
-                }
-                private set
-                {
-                    _name = value;
-                }
-            }
-            public string Identifier
-            {
-                get
-                {
-                    return _identifier;
-                }
-                private set
-                {
-                    _identifier = value;
-                }
-            }
-            public bool Exists
-            {
-                get
-                {
-                    return _exists;
-                }
-                private set
-                {
-                    _exists = value;
-                }
-            }
-            public bool Loaded
-            {
-                get
-                {
-                    return _loaded;
-                }
-                private set
-                {
-                    _loaded = value;
-                }
-            }
+
             public RequiredGroup(UtilityManager utilityManager,string _groupIdentifier,bool load = true)
             {
                 _utilityManager = utilityManager;
@@ -85,7 +37,7 @@ namespace IngameScript
                 Name = Identifier;
                 Exists = false;
                 Loaded = false;
-                if(load) LoadGroup();
+                if(load) Load();
             }
 
             public T this[int i]
@@ -110,9 +62,9 @@ namespace IngameScript
                 }
                 return true;
             }
-            public bool LoadGroup()
+            public override bool Load()
             {
-                if(CheckGroupExists())
+                if(CheckExists())
                 {
                     GroupBlocks = _utilityManager.blockFinder.GetGroupByName<T>(Identifier);
                     if(GroupBlocks != null)
@@ -124,7 +76,7 @@ namespace IngameScript
                 _utilityManager.logger.ShowDebug();
                 return Loaded;
             }
-            public bool CheckGroupExists()
+            public override bool CheckExists()
             {
                 Exists = _utilityManager.blockFinder.FindGroupsByName(Identifier);
                 return Exists;

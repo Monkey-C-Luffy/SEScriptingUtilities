@@ -4,19 +4,16 @@
 Copyright (c) 2022 Monkey C Luffy
  */
 using System;
+using System.Collections.Generic;
 using Sandbox.ModAPI.Ingame;
 
 namespace IngameScript
 {
     partial class Program
     {
-        public class RequiredBlock<T> : IEquatable<RequiredBlock<T>> where T : class,IMyTerminalBlock
+        public class RequiredBlock<T> : RequiredBase, IEquatable<RequiredBlock<T>> where T : class,IMyTerminalBlock
         {
             private T _block = default(T);
-            private string _name;
-            private string _identifier;
-            private bool _exists;
-            private bool _loaded;
             public T Block
             {
                 get
@@ -28,52 +25,14 @@ namespace IngameScript
                     _block = value;
                 }
             }
-            public string Name
-            {
-                get
-                {
-                    return _name;
-                }
-                private set
-                {
-                    _name = value;
-                }
-            }
-            public string Identifier
-            {
-                get
-                {
-                    return _identifier;
-                }
-                private set
-                {
-                    _identifier = value;
-                }
-            }
-            public bool Exists
-            {
-                get
-                {
-                    return _exists;
-                }
-                private set
-                {
-                    _exists = value;
-                }
-            }
-            public bool Loaded
-            {
-                get
-                {
-                    return _loaded;
-                }
-                private set
-                {
-                    _loaded = value;
-                }
-            }
 
-            private UtilityManager _utilityManager;
+            private List<Func<T,bool>> conditions = new List<Func<T,bool>>();
+
+            public delegate bool ConditionMetHandler();
+            //private delegate bool ConditionMetHandler<In>(Func<In,bool> predicate);
+            //private delegate bool ConditionMetHandler<In1,In2>(Func<In1,In2,bool> predicate);
+
+            public event ConditionMetHandler ConditionMet;
             public RequiredBlock(UtilityManager utilityManager,string blockIdentifier,bool load = true)
             {
                 _utilityManager = utilityManager;
@@ -81,12 +40,12 @@ namespace IngameScript
                 Name = "";
                 Exists = false;
                 Loaded = false;
-                if(load) LoadBlock();
+                if(load) Load();
             }
 
-            public bool LoadBlock()
+            public override bool Load()
             {
-                if(CheckBlockExists())
+                if(CheckExists())
                 {
                     Block = _utilityManager.blockFinder.GetBlockByName<T>(Identifier);
                     if(Block != default(T))
@@ -99,15 +58,29 @@ namespace IngameScript
                 return Loaded;
             }
 
-            public bool CheckBlockExists()
+            public override bool CheckExists()
             {
                 Exists = _utilityManager.blockFinder.FindBlocksByName(Identifier);
                 return Exists;
             }
             public T GetBlock(bool load=true)
             {
-                if(!Loaded && load) LoadBlock();
+                if(!Loaded && load) Load();
                 return Block;
+            }
+
+            public bool AddCondition(Func<T,bool> predicate)
+            {
+                try
+                {
+                    conditions.Add(predicate);
+                }
+                catch(Exception e)
+                {
+                    _utilityManager.logger.ShowException(e,$"Error trying to add predicate to conditions list in RequiredBlock:{Name}!");
+                    return false;
+                }
+                return true;
             }
             public override int GetHashCode()
             {
