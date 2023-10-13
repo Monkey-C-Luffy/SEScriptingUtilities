@@ -22,6 +22,7 @@ Global
 		SolutionGuid = {F36619BC-419D-4EF0-8691-FBDDE2E13FE6}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		SEScriptingUtilities\SEScriptingUtilities.projitems*{1158dda5-2730-4680-a01c-7c9e3fce1857}*SharedItemsImports = 4
 		SEScriptingUtilities\SEScriptingUtilities.projitems*{61eba249-19f3-48b6-a25b-a4cee90168ba}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

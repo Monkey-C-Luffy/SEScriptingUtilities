@@ -32,9 +32,13 @@ namespace IngameScript
 
             public RequiredGroup(UtilityManager utilityManager,string _groupIdentifier,bool load = true)
             {
+                if(utilityManager == null)
+                {
+                    throw new ArgumentNullException("Utility Manager");
+                }
                 _utilityManager = utilityManager;
                 Identifier = _groupIdentifier;
-                Name = Identifier;
+                DisplayName = Identifier;
                 Exists = false;
                 Loaded = false;
                 if(load) Load();
@@ -53,11 +57,11 @@ namespace IngameScript
                     {
                         action.Invoke(block);
                     }
-                    _utilityManager.logger.DebugLine($"Succesfully applied action to block group of RequiredGroup '{Name}'!");
+                    _utilityManager.logger.DebugLine($"Succesfully applied action to block group of RequiredGroup '{DisplayName}'!");
                 }
                 catch(Exception e)
                 {
-                    _utilityManager.logger.ShowException(e,$"Tried applying action:{action.Method} to blocks of type:{typeof(T)}\nin RequiredBlock with name {_name}");
+                    _utilityManager.logger.ShowException(e,$"Tried applying action:{action.Method} to blocks of type:{typeof(T)}\nin RequiredBlock with name {DisplayName}");
                     return false;
                 }
                 return true;
@@ -70,7 +74,7 @@ namespace IngameScript
                     if(GroupBlocks != null)
                     { 
                         Loaded = true;
-                        Name = Identifier;           
+                        DisplayName = Identifier;           
                     }
                 }
                 _utilityManager.logger.ShowDebug();
@@ -100,12 +104,12 @@ namespace IngameScript
 
             public List<T> GetGroup(bool load=true)
             {
-                if(!Loaded && load) LoadGroup();
+                if(!Loaded && load) Load();
                 return GroupBlocks;
             }
             public override int GetHashCode()
             {
-                return Name.GetHashCode() + Identifier.GetHashCode() + GroupBlocks.GetHashCode();
+                return DisplayName.GetHashCode() + Identifier.GetHashCode() + GroupBlocks.GetHashCode();
             }
             public bool Equals(RequiredGroup<T> other)
             {

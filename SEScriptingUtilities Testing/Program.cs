@@ -69,6 +69,7 @@ namespace IngameScript
 
         public void Main(string argument,UpdateType updateSource)
         {
+            UtilityManager utilManager = new UtilityManager(this);
             // The main entry point of the script, invoked every time
             // one of the programmable block's Run actions are invoked,
             // or the script updates itself. The updateSource argument

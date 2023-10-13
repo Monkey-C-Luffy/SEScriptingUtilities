@@ -35,9 +35,13 @@ namespace IngameScript
             public event ConditionMetHandler ConditionMet;
             public RequiredBlock(UtilityManager utilityManager,string blockIdentifier,bool load = true)
             {
+                if(utilityManager == null)
+                {
+                    throw new ArgumentNullException("Utility Manager");
+                }
                 _utilityManager = utilityManager;
                 Identifier = blockIdentifier;
-                Name = "";
+                DisplayName = "";
                 Exists = false;
                 Loaded = false;
                 if(load) Load();
@@ -51,7 +55,7 @@ namespace IngameScript
                     if(Block != default(T))
                     {
                         Loaded = true;
-                        Name = Block.DisplayNameText;
+                        DisplayName = Block.DisplayNameText;
                     }
                 }
                 _utilityManager.logger.ShowDebug();
@@ -77,14 +81,14 @@ namespace IngameScript
                 }
                 catch(Exception e)
                 {
-                    _utilityManager.logger.ShowException(e,$"Error trying to add predicate to conditions list in RequiredBlock:{Name}!");
+                    _utilityManager.logger.ShowException(e,$"Error trying to add predicate to conditions list in RequiredBlock:{DisplayName}!");
                     return false;
                 }
                 return true;
             }
             public override int GetHashCode()
             {
-                return Name.GetHashCode() + Identifier.GetHashCode() + Block.GetHashCode();
+                return DisplayName.GetHashCode() + Identifier.GetHashCode() + Block.GetHashCode();
             }
 
             public bool Equals(RequiredBlock<T> other)

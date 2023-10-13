@@ -156,7 +156,6 @@ namespace IngameScript
                     {
                         if(group.Name == name)
                         {
-                            group.GetBlocksOfType(container);
                             if(container == null)
                             {
                                 _loggerInstance.ShowException(new Exception($"Null!Container of blocks for {group.Name} is NULL!"));
@@ -164,11 +163,14 @@ namespace IngameScript
                             if(container.Count > 0)
                             {
                                 _loggerInstance.DebugLog($"Group '{group.Name}' was acquired!");
+                                group.GetBlocksOfType(container);
+                                return;
                             }
                             else
                             {
                                 _loggerInstance.ShowException(new Exception($"Error!Container of blocks for {group.Name} is Empty!"));
                             }
+                            break;
                         }
                     }
                     _loggerInstance.DebugLog($"Group '{name}' could NOT be acquired!");
@@ -197,7 +199,7 @@ namespace IngameScript
                     List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
                     _programInstance.GridTerminalSystem.GetBlockGroups(blockGroups);
                    foreach(IMyBlockGroup blockGroup in blockGroups)
-{
+                   {
                         if(blockGroup.Name == name)
                         {
                             List<T> retList = new List<T>();
@@ -209,12 +211,13 @@ namespace IngameScript
                             if(retList.Count > 0)
                             {
                                 _loggerInstance.DebugLog($"Group '{blockGroup.Name}' was acquired!");
+                                return retList;
                             }
                             else
                             {
                                 _loggerInstance.ShowException(new Exception($"Error!Container of blocks for {blockGroup.Name} is Empty!"));
                             }
-                            return retList;
+                            break;
                         }
                     }
                     _loggerInstance.DebugLog($"Group '{name}' could NOT be acquired!");
@@ -230,7 +233,6 @@ namespace IngameScript
          where T : class, IMyTerminalBlock
             {
                 List<T> typedList = new List<T>();
-
                 try
                 {
                     groupBlocks.GetBlocksOfType(typedList);

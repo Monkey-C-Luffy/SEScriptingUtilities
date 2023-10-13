@@ -29,6 +29,10 @@ namespace IngameScript
             public readonly Logger logger;
             public UtilityManager(MyGridProgram gridProgram,Logger _logger=null,BlockFinder _blockFinder=null)
             {
+                if(gridProgram == null)
+                {
+                    throw new ArgumentNullException("Grid Program");
+                }
                 logger = _logger ?? new Logger(gridProgram);
                 blockFinder = _blockFinder ?? new BlockFinder(gridProgram,logger);
             }

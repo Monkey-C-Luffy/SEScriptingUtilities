@@ -30,7 +30,10 @@ namespace IngameScript
             protected string _identifier;
             protected bool _exists;
             protected bool _loaded;
-            public string Name
+            /// <summary>
+            /// The in game display name of the required block or group
+            /// </summary>
+            public string DisplayName
             {
                 get
                 {
@@ -41,6 +44,9 @@ namespace IngameScript
                     _name = value;
                 }
             }
+            /// <summary>
+            /// The given identifier for the required block or group
+            /// </summary>
             public string Identifier
             {
                 get
