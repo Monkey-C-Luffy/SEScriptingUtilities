@@ -34,7 +34,6 @@ namespace IngameScript
             public bool FindBlocksByName(params string[] blockNames)
             {
                 List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
-                Dictionary<string,int> indexesOfFoundBlocks = new Dictionary<string,int>();
                 bool foundABlock;
                 _programInstance.GridTerminalSystem.GetBlocks(blocks);
                 try
@@ -46,12 +45,11 @@ namespace IngameScript
                         {
                             if(blockNames[i] == "")
                             {
-                                _loggerInstance.ShowException(new Exception("EmptyStringKeyException"),"Cannot search by empty key,try another key!");
+                                _loggerInstance.ShowException(new Exception("EmptyStringKeyException"),$"Failed searching for block {block.DisplayNameText}. Cannot search by empty key,try another key!");
                             }
                             if(block.DisplayNameText == blockNames[i])
                             {
                                 if(!blocksFound.ContainsKey(blockNames[i]) && allowCaching) blocksFound.Add(blockNames[i],block);
-                                if(!indexesOfFoundBlocks.ContainsKey(blockNames[i])) indexesOfFoundBlocks.Add(blockNames[i],i);
                                 _loggerInstance.DebugLog($"Block '{block.DisplayNameText}' was found!");
                                 requiredBlocksCnt++;
                                 foundABlock = true;
@@ -62,14 +60,14 @@ namespace IngameScript
                 }
                 catch(Exception e)
                 {
-                    _loggerInstance.DebugLog($"An error has occured finding the  blocks\nError:{e.Message}");
+                     _loggerInstance.ShowDebug();
+                    _loggerInstance.ShowException(e);
                 }       
                 return requiredBlocksCnt == blockNames.Length ? true : false;
             }
             public bool FindGroupsByName(params string[] groupNames)
             {
                 List<IMyBlockGroup> groups = new List<IMyBlockGroup>();
-                Dictionary<string,int> indexesOfFoundGroups = new Dictionary<string, int>();
                 bool foundAGroup;
                 _programInstance.GridTerminalSystem.GetBlockGroups(groups);
                 try
@@ -86,7 +84,6 @@ namespace IngameScript
                             if(group.Name == groupNames[i])
                             {
                                 if(!groupsFound.ContainsKey(groupNames[i]) && allowCaching) groupsFound.Add(groupNames[i],group);
-                                if(!indexesOfFoundGroups.ContainsKey(groupNames[i])) indexesOfFoundGroups.Add(groupNames[i],i);
                                 _loggerInstance.DebugLog($"Group '{group.Name}' was found!");
                                 requiredGroupsCnt++;
                                 foundAGroup = true;
@@ -97,7 +94,8 @@ namespace IngameScript
                 }
                 catch(Exception e)
                 {
-                    _loggerInstance.DebugLog($"An error has occured finding the  blocks\nError:{e.Message}");
+                    _loggerInstance.ShowDebug();
+                    _loggerInstance.ShowException(e);
                 }             
                 return requiredGroupsCnt == groupNames.Length ? true : false;
             }

@@ -27,7 +27,7 @@ namespace IngameScript
                 }
             }
 
-            public const int maxDebugLines = 20;
+            public int maxDebugLines = 20;
 
             static List<string> debugStringsList = new List<string>();
 
@@ -45,7 +45,7 @@ namespace IngameScript
             }
             public void ShowInstructionCount(string message="")
             {
-                DebugLine($"Instructions count:{InstructionsCount},at {message}");
+                DebugLog($"Instructions count:{InstructionsCount},at {message}",true);
             }
             public void ShowDebug()
             {
@@ -55,7 +55,7 @@ namespace IngameScript
                     _programInstance.Echo(debugStringsList[i]);
                 }
             }
-            public void DebugLog(string debugString,bool showDebug = false)
+            public void DebugLog(string debugString,bool showDebug = true)
             {
                 if(!DebugEnable) return;
                 if(maxDebugLines>0 &&debugStringsList.Count > maxDebugLines)
@@ -64,11 +64,6 @@ namespace IngameScript
                 }             
                 debugStringsList.Add(debugString);
                 if(showDebug) ShowDebug();
-            }
-            public void DebugLine(string debugLine)
-            {
-                if(!DebugEnable) return;
-                _programInstance.Echo(debugLine);
             }
             public void ShowException(Exception e,string extraMessage = "")
             {

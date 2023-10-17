@@ -33,7 +33,7 @@ namespace IngameScript
             //private delegate bool ConditionMetHandler<In1,In2>(Func<In1,In2,bool> predicate);
 
             public event ConditionMetHandler ConditionMet;
-            public RequiredBlock(UtilityManager utilityManager,string blockIdentifier,bool load = true)
+            public RequiredBlock(UtilityManager utilityManager,string blockIdentifier,bool autoLoad = true)
             {
                 if(utilityManager == null)
                 {
@@ -44,7 +44,7 @@ namespace IngameScript
                 DisplayName = "";
                 Exists = false;
                 Loaded = false;
-                if(load) Load();
+                if(autoLoad) Load();
             }
 
             public override bool Load()

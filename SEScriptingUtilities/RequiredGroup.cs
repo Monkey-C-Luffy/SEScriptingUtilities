@@ -57,7 +57,7 @@ namespace IngameScript
                     {
                         action.Invoke(block);
                     }
-                    _utilityManager.logger.DebugLine($"Succesfully applied action to block group of RequiredGroup '{DisplayName}'!");
+                    _utilityManager.logger.DebugLog($"Succesfully applied action to block group of RequiredGroup '{DisplayName}'!");
                 }
                 catch(Exception e)
                 {
