@@ -15,4 +15,4 @@ To setup your SE Scripting Utilities project:
 This should be it!All done!
 
 ## Using With Malware Dev's Extension
-It is highly advised,to reduce the final lines of your script,to enable the MDK option **Remove Unused Types**
+It is highly advised to reduce the final lines of your script,by enabling the MDK option **Remove Unused Types**
