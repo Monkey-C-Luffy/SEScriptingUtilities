@@ -7,8 +7,8 @@ namespace SEScriptingUtilities
 {
     public class ObservableBlock<T>: IEquatable<ObservableBlock<T>> where T : class, IMyTerminalBlock
     {
-        UtilityManager _utilityManager;
-        RequiredBlock<T> block;
+        private UtilityManager _utilityManager;
+        private RequiredBlock<T> _block;
         private List<ConditionalAction<T>> conditionalActions = new List<ConditionalAction<T>>();
         public ObservableBlock(UtilityManager utilityManager, RequiredBlock<T> requiredBlock)
         {
@@ -20,14 +20,21 @@ namespace SEScriptingUtilities
             {
                 throw new ArgumentNullException("Required Block");
             }
-            block = requiredBlock;
+            _block = requiredBlock;
             _utilityManager = utilityManager;
         }
         public void Update()
         {
-            foreach(var action in conditionalActions)
-            { 
-                action.Update();
+            try
+            {
+                foreach(var action in conditionalActions)
+                {
+                    action.Update();
+                }
+            }
+            catch(Exception ex)
+            {
+                _utilityManager.logger.ShowException(ex,$"Error in update of ObservableBlock {_block.DisplayName}!");
             }
         }
         public bool AddConditionalActions(ConditionalAction<T> conditionalAction)
@@ -38,19 +45,19 @@ namespace SEScriptingUtilities
             }
             catch(Exception e)
             {
-                _utilityManager.logger.ShowException(e,$"Error trying to add condtional action to conditional actions list in ObservableBlock:{block.DisplayName}!");
+                _utilityManager.logger.ShowException(e,$"Error trying to add condtional action to conditional actions list in ObservableBlock:{_block.DisplayName}!");
                 return false;
             }
             return true;
         }
         public override int GetHashCode()
         {
-            return block.DisplayName.GetHashCode() + block.Identifier.GetHashCode() + block.GetHashCode();
+            return _block.GetHashCode();
         }
 
         public bool Equals(ObservableBlock<T> other)
         {
-            return block == other.block;
+            return _block == other._block;
         }
     }
 }

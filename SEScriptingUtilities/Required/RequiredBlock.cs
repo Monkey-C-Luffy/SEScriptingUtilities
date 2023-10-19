@@ -70,7 +70,7 @@ namespace SEScriptingUtilities
         }
         public static explicit operator T(RequiredBlock<T> block)
         {
-            return block.GetBlock();
+            return block?.GetBlock();
         }
     }
 }

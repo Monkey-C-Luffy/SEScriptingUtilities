@@ -23,12 +23,18 @@ namespace SEScriptingUtilities
     public class ConditionalAction<BlockType> where BlockType : class,IMyTerminalBlock
     {
         public delegate bool ConditionMetHandler(BlockType block);
+
         public event ConditionMetHandler ConditionMet;
-        Func<BlockType,bool> condition;
-        Func<BlockType,bool> blockAction;
-        RequiredBlock<BlockType> block;
-        public ConditionalAction(Func<BlockType,bool> _blockAction,Func<BlockType,bool> _condition)
+        private Func<BlockType,bool> condition;
+        private Func<BlockType,bool> blockAction;
+        private RequiredBlock<BlockType> block;
+        private UtilityManager utilityManager;
+        public ConditionalAction(UtilityManager _utilityManager,RequiredBlock<BlockType> _block,Func<BlockType,bool> _blockAction,Func<BlockType,bool> _condition)
         {
+            if(_utilityManager == null)
+            {
+                throw new ArgumentNullException("Utility Manager");
+            }
             if(_blockAction == null)
             {
                 throw new ArgumentNullException("Block Action");
@@ -37,21 +43,34 @@ namespace SEScriptingUtilities
             {
                 throw new ArgumentNullException("Condition");
             }
+            if(_block == null)
+            {
+                throw new ArgumentNullException("Block");
+            }
+            block = _block;
+            utilityManager = _utilityManager;
             condition = _condition;
             blockAction = _blockAction;
         }
         public void Update()
         {
-            if(CheckCondition())
+            try
             {
-                blockAction?.DynamicInvoke(block);
-                ConditionMet?.DynamicInvoke(block);
+                if(CheckCondition())
+                {
+                    blockAction?.DynamicInvoke(block.GetBlock());
+                    ConditionMet?.DynamicInvoke(block.GetBlock());
+                }
+            }
+            catch (Exception ex)
+            {
+                utilityManager.logger.ShowException(ex,$"Error in update of ObservableBlock {block.DisplayName}!");
             }
         }
 
         public bool CheckCondition()
         {
-            return condition.Invoke((BlockType)block);
+            return condition.Invoke(block.GetBlock());
         }
     }
 }

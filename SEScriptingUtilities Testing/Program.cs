@@ -16,12 +16,8 @@ namespace Testing
             utilManager = new UtilityManager(this);
             requiredBlock = new RequiredBlock<IMyMotorStator>(utilManager,"Test Rotor");
             observableBlock = new ObservableBlock<IMyMotorStator>(utilManager,requiredBlock);
-            conditionalAction = new ConditionalAction<IMyMotorStator>((r) => r.RotorLock,(r) => r.Angle > 50 && r.Angle < 100);
+            conditionalAction = new ConditionalAction<IMyMotorStator>(utilManager,requiredBlock,(r) => r.RotorLock,(r) => r.Angle > 50 && r.Angle < 100);
             observableBlock.AddConditionalActions(conditionalAction);
-        }
-
-        public void Save()
-        { 
         }
 
         public void Main(string argument,UpdateType updateSource)
