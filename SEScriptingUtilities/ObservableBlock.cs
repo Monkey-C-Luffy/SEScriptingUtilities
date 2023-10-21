@@ -9,7 +9,7 @@ namespace SEScriptingUtilities
     {
         private UtilityManager _utilityManager;
         private RequiredBlock<T> _block;
-        private List<ConditionalAction<T>> conditionalActions = new List<ConditionalAction<T>>();
+        private Dictionary<ConditionalAction<T>,ConditionPriority> conditionalActions = new Dictionary<ConditionalAction<T>, ConditionPriority>();
         public ObservableBlock(UtilityManager utilityManager, RequiredBlock<T> requiredBlock)
         {
             if(utilityManager == null)
@@ -27,7 +27,7 @@ namespace SEScriptingUtilities
         {
             try
             {
-                foreach(var action in conditionalActions)
+                foreach(var action in conditionalActions.Keys)
                 {
                     action.Update();
                 }
@@ -37,11 +37,11 @@ namespace SEScriptingUtilities
                 _utilityManager.logger.ShowException(ex,$"Error in update of ObservableBlock {_block.DisplayName}!");
             }
         }
-        public bool AddConditionalActions(ConditionalAction<T> conditionalAction)
+        public bool AddConditionalAction(ConditionalAction<T> conditionalAction,ConditionPriority conditionPriority = ConditionPriority.Normal)
         {
             try
             {
-                conditionalActions.Add(conditionalAction);
+                if(!conditionalActions.ContainsKey(conditionalAction)) conditionalActions.Add(conditionalAction,conditionPriority);
             }
             catch(Exception e)
             {

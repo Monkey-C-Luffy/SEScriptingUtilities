@@ -26,6 +26,11 @@ namespace SEScriptingUtilities
             _programInstance = programInstance;
             _loggerInstance = logger;
         }
+        /// <summary>
+        /// A function to check if a block exists in the grid.
+        /// </summary>
+        /// <param name="blockNames">Name is pattern match,so be more specific if you require exact name</param>
+        /// <returns></returns>
         public bool FindBlocksByName(params string[] blockNames)
         {
             List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
@@ -40,9 +45,10 @@ namespace SEScriptingUtilities
                     {
                         if(blockNames[i] == "")
                         {
-                            _loggerInstance.ShowException(new Exception("EmptyStringKeyException"),$"Failed searching for block {block.DisplayNameText}. Cannot search by empty key,try another key!");
+                            _loggerInstance.ShowException(new Exception("EmptyStringKeyException")
+                                ,$"Failed searching for block {blockNames[i]}. Cannot search by empty key,try another key!");
                         }
-                        if(block.DisplayNameText == blockNames[i])
+                        if(block.DisplayNameText.Contains(blockNames[i]))
                         {
                             if(!blocksFound.ContainsKey(blockNames[i]) && allowCaching) blocksFound.Add(blockNames[i],block);
                             _loggerInstance.DebugLog($"Block '{block.DisplayNameText}' was found!");
@@ -60,6 +66,11 @@ namespace SEScriptingUtilities
             }
             return requiredBlocksCnt == blockNames.Length ? true : false;
         }
+        /// <summary>
+        /// A function to check if a group exists in a grid
+        /// </summary>
+        /// <param name="groupNames">Name is pattern match,so be more specific if you require exact name</param>
+        /// <returns></returns>
         public bool FindGroupsByName(params string[] groupNames)
         {
             List<IMyBlockGroup> groups = new List<IMyBlockGroup>();
@@ -74,9 +85,10 @@ namespace SEScriptingUtilities
                     {
                         if(groupNames[i] == "")
                         {
-                            _loggerInstance.ShowException(new Exception("EmptyStringKeyException"),"Cannot search by empty key,try another key!");
+                            _loggerInstance.ShowException(new Exception("EmptyStringKeyException")
+                                ,$"Failed searching for block {groupNames[i]}Cannot search by empty key,try another key!");
                         }
-                        if(group.Name == groupNames[i])
+                        if(group.Name.Contains(groupNames[i]))
                         {
                             if(!groupsFound.ContainsKey(groupNames[i]) && allowCaching) groupsFound.Add(groupNames[i],group);
                             _loggerInstance.DebugLog($"Group '{group.Name}' was found!");
@@ -127,52 +139,6 @@ namespace SEScriptingUtilities
                 _loggerInstance.ShowException(e,$"Error trying to get block with name:{name}");
             }
             return default(T);
-        }
-        public void GetGroupByName<T>(string name,List<T> container) where T : class, IMyTerminalBlock
-        {
-            try
-            {
-                if(name == "")
-                {
-                    _loggerInstance.ShowException(new Exception("EmptyStringKeyException"),"Cannot search by empty key,try another key!");
-                    return;
-                }
-                if(groupsFound.ContainsKey(name))
-                {
-                    groupsFound[name].GetBlocksOfType(container);
-                    _loggerInstance.DebugLog($"Group '{groupsFound[name]}' was acquired!");
-                    return;
-                }
-                List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
-                _programInstance.GridTerminalSystem.GetBlockGroups(blockGroups);
-                foreach(IMyBlockGroup group in blockGroups)
-                {
-                    if(group.Name == name)
-                    {
-                        if(container == null)
-                        {
-                            _loggerInstance.ShowException(new Exception($"Null!Container of blocks for {group.Name} is NULL!"));
-                        }
-                        if(container.Count > 0)
-                        {
-                            _loggerInstance.DebugLog($"Group '{group.Name}' was acquired!");
-                            group.GetBlocksOfType(container);
-                            return;
-                        }
-                        else
-                        {
-                            _loggerInstance.ShowException(new Exception($"Error!Container of blocks for {group.Name} is Empty!"));
-                        }
-                        break;
-                    }
-                }
-                _loggerInstance.DebugLog($"Group '{name}' could NOT be acquired!");
-            }
-            catch(Exception e)
-            {
-                _loggerInstance.ShowDebug();
-                _loggerInstance.ShowException(e);
-            }
         }
         public List<T> GetGroupByName<T>(string name) where T : class, IMyTerminalBlock
         {

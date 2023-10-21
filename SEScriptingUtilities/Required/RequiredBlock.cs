@@ -31,7 +31,7 @@ namespace SEScriptingUtilities
             }
             _utilityManager = utilityManager;
             Identifier = blockIdentifier;
-            DisplayName = "";
+            DisplayName = Identifier;
             Exists = false;
             Loaded = false;
             if(autoLoad) Load();
@@ -66,7 +66,7 @@ namespace SEScriptingUtilities
         }
         public bool Equals(RequiredBlock<T> other)
         {
-            return Block == other.Block && Identifier == other.Identifier;
+            return Block == other.Block && Identifier == other.Identifier && DisplayName == other.DisplayName;
         }
         public static explicit operator T(RequiredBlock<T> block)
         {

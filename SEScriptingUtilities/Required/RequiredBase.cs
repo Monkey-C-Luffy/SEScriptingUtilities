@@ -3,10 +3,10 @@
     public abstract class RequiredBase
     {
         protected UtilityManager _utilityManager;
-        protected string _name;
-        protected string _identifier;
-        protected bool _exists;
-        protected bool _loaded;
+        protected string _name = "";
+        protected string _identifier = "";
+        protected bool _exists = false;
+        protected bool _loaded = false;
         /// <summary>
         /// The in game display name of the required block or group
         /// </summary>

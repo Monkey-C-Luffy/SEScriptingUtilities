@@ -14,15 +14,22 @@ namespace Testing
         {   
             Runtime.UpdateFrequency=  UpdateFrequency.Update1;
             utilManager = new UtilityManager(this);
-            requiredBlock = new RequiredBlock<IMyMotorStator>(utilManager,"Test Rotor");
-            observableBlock = new ObservableBlock<IMyMotorStator>(utilManager,requiredBlock);
-            conditionalAction = new ConditionalAction<IMyMotorStator>(utilManager,requiredBlock,(r) => r.RotorLock,(r) => r.Angle > 50 && r.Angle < 100);
-            observableBlock.AddConditionalActions(conditionalAction);
         }
 
         public void Main(string argument,UpdateType updateSource)
         {   
+            requiredBlock = requiredBlock ?? new RequiredBlock<IMyMotorStator>(utilManager,"Test Rotor");
+            observableBlock = observableBlock ?? new ObservableBlock<IMyMotorStator>(utilManager,requiredBlock);
+            conditionalAction = conditionalAction ?? new ConditionalAction<IMyMotorStator>(utilManager,requiredBlock
+                ,(r) => StopRotor(r),(r) => Conversions.RadToDeg(r.Angle) > 50 && Conversions.RadToDeg(r.Angle) < 100);
+            observableBlock.AddConditionalAction(conditionalAction);
             observableBlock.Update();
+        }
+        public bool StopRotor(IMyMotorStator rotor)
+        {
+            rotor.TargetVelocityRPM = 0;
+            rotor.RotorLock = true;
+            return true;
         }
     }
 }
