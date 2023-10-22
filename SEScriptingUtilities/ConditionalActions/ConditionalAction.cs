@@ -35,9 +35,9 @@ namespace SEScriptingUtilities
         public event ConditionMetHandler ConditionMet;
         private Func<BlockType,bool> condition;
         private Func<BlockType,bool> blockAction;
-        private RequiredBlock<BlockType> block;
+        private ObservableBlock<BlockType> block;
         private UtilityManager utilityManager;
-        public ConditionalAction(UtilityManager _utilityManager,RequiredBlock<BlockType> _block,Func<BlockType,bool> _blockAction,Func<BlockType,bool> _condition)
+        public ConditionalAction(UtilityManager _utilityManager,ObservableBlock<BlockType> _observableBlock,Func<BlockType,bool> _blockAction,Func<BlockType,bool> _condition)
         {
             if(_utilityManager == null)
             {
@@ -51,11 +51,11 @@ namespace SEScriptingUtilities
             {
                 throw new ArgumentNullException("Condition");
             }
-            if(_block == null)
+            if(_observableBlock == null)
             {
                 throw new ArgumentNullException("Block");
             }
-            block = _block;
+            block = _observableBlock;
             utilityManager = _utilityManager;
             condition = _condition;
             blockAction = _blockAction;

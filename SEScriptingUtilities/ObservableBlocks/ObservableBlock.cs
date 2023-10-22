@@ -5,24 +5,11 @@ using Sandbox.ModAPI.Ingame;
 
 namespace SEScriptingUtilities
 {
-    public class ObservableBlock<T>: IEquatable<ObservableBlock<T>> where T : class, IMyTerminalBlock
+    public class ObservableBlock<T>: RequiredBlock<T>,IEquatable<ObservableBlock<T>> where T : class, IMyTerminalBlock
     {
-        private UtilityManager _utilityManager;
-        private RequiredBlock<T> _block;
         private Dictionary<ConditionalAction<T>,ConditionPriority> conditionalActions = new Dictionary<ConditionalAction<T>, ConditionPriority>();
-        public ObservableBlock(UtilityManager utilityManager, RequiredBlock<T> requiredBlock)
-        {
-            if(utilityManager == null)
-            {
-                throw new ArgumentNullException("Utility Manager");
-            }
-            if(requiredBlock == null)
-            {
-                throw new ArgumentNullException("Required Block");
-            }
-            _block = requiredBlock;
-            _utilityManager = utilityManager;
-        }
+        public ObservableBlock(UtilityManager utilityManager,string blockIdentifier,bool autoLoad = true)
+            :base(utilityManager,blockIdentifier,autoLoad){ }
         public void Update()
         {
             try
@@ -34,7 +21,7 @@ namespace SEScriptingUtilities
             }
             catch(Exception ex)
             {
-                _utilityManager.logger.ShowException(ex,$"Error in update of ObservableBlock {_block.DisplayName}!");
+                _utilityManager.logger.ShowException(ex,$"Error in update of ObservableBlock {Block.DisplayName}!");
             }
         }
         public bool AddConditionalAction(ConditionalAction<T> conditionalAction,ConditionPriority conditionPriority = ConditionPriority.Normal)
@@ -45,19 +32,19 @@ namespace SEScriptingUtilities
             }
             catch(Exception e)
             {
-                _utilityManager.logger.ShowException(e,$"Error trying to add condtional action to conditional actions list in ObservableBlock:{_block.DisplayName}!");
+                _utilityManager.logger.ShowException(e,$"Error trying to add condtional action to conditional actions list in ObservableBlock:{Block.DisplayName}!");
                 return false;
             }
             return true;
         }
         public override int GetHashCode()
         {
-            return _block.GetHashCode();
+            return Block.GetHashCode();
         }
 
         public bool Equals(ObservableBlock<T> other)
         {
-            return _block == other._block;
+            return Block == other.Block;
         }
     }
 }

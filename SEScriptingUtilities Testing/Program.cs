@@ -18,9 +18,8 @@ namespace Testing
 
         public void Main(string argument,UpdateType updateSource)
         {   
-            requiredBlock = requiredBlock ?? new RequiredBlock<IMyMotorStator>(utilManager,"Test Rotor");
-            observableBlock = observableBlock ?? new ObservableBlock<IMyMotorStator>(utilManager,requiredBlock);
-            conditionalAction = conditionalAction ?? new ConditionalAction<IMyMotorStator>(utilManager,requiredBlock
+            observableBlock = observableBlock ?? new ObservableBlock<IMyMotorStator>(utilManager,"Test Rotor");
+            conditionalAction = conditionalAction ?? new ConditionalAction<IMyMotorStator>(utilManager,observableBlock
                 ,(r) => StopRotor(r),(r) => Conversions.RadToDeg(r.Angle) > 50 && Conversions.RadToDeg(r.Angle) < 100);
             observableBlock.AddConditionalAction(conditionalAction);
             observableBlock.Update();
